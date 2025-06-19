@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "WjDzGNI6bRxXQzqXnn2AlsIL9V1DRZHsJp3z29lk9Y4=",
+  "Source": "OracleMES.API",
+  "BasePath": "_content/OracleMES.API",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

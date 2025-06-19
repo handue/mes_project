@@ -1,0 +1,3 @@
+chmod +x setup-oracle-mes.sh -> providing permission
+
+./setup-oracle-mes.sh -> execute set up code
