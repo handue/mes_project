@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("OracleMES.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b030e5029de547d61318674098d867369fd385b2")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f8484cabb14a8633594fa23c58d9946659f935b0")]
 [assembly: System.Reflection.AssemblyProductAttribute("OracleMES.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("OracleMES.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
