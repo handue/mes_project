@@ -1,3 +1,9 @@
-// namespace OracleMES.Core.Interfaces.Repositories;
+using OracleMES.Infrastructure.Entities;
 
-// public interface IEmployeeRepository : IRepoti
+namespace OracleMES.Core.Interfaces.Repositories;
+
+// todo: add employee repository
+public interface IEmployeeRepository : IRepository<Employee>
+{
+    
+}
