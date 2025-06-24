@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace OracleMES.Infrastructure.Entities;
+namespace OracleMES.Core.Entities;
 
 public partial class Workorder
 {
