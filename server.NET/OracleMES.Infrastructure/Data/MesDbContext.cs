@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using OracleMES.Infrastructure.Entities;
+using OracleMES.Core.Entities;
 
 namespace OracleMES.Infrastructure.Data;
 
