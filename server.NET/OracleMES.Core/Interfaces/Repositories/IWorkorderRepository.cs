@@ -3,7 +3,7 @@ using OracleMES.Core.Entities;
 
 namespace OracleMES.Core.Interfaces.Repositories;
 
-public interface IWorkOrderRepository : IRepository<Workorder>
+public interface IWorkorderRepository : IRepository<Workorder>
 {
 
     Task<IEnumerable<Workorder>> GetByStatusAsync(string status);

@@ -8,60 +8,75 @@ namespace OracleMES.Infrastructure.Repositories;
 public class Repository<T>(MesDbContext context) : IRepository<T> where T : class
 {
     protected readonly MesDbContext _context = context;
-    protected readonly DbSet<T> _entities = context.Set<T>();
+    protected readonly DbSet<T> _dbSet = context.Set<T>();
 
-    public Task AddArrangeAsync(IEnumerable<T> entities)
+    public virtual async Task<T> AddAsync(T entity)
     {
-        throw new NotImplementedException();
+        await _dbSet.AddAsync(entity);
+        await _context.SaveChangesAsync();
+
+        return entity;
+
     }
 
-    public Task<T> CreateAsync(T entity)
+    public virtual async Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> entities)
     {
-        throw new NotImplementedException();
+        await _dbSet.AddRangeAsync(entities);
+        await _context.SaveChangesAsync();
+
+        return entities;
     }
 
-    public Task<IEnumerable<T>> CreateRangeAsync(IEnumerable<T> entities)
+    public virtual async Task<bool> ExistsAsync(int id)
     {
-        throw new NotImplementedException();
+        return await _dbSet.FindAsync(id) != null;
     }
 
-    public Task DeleteAsync(T entity)
+    public virtual async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
     {
-        throw new NotImplementedException();
+        return await _dbSet.Where(predicate).ToListAsync();
     }
 
-    public Task DeleteRangeAsync(IEnumerable<T> entities)
+    public virtual async Task<IEnumerable<T>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        return await _dbSet.ToListAsync();
     }
 
-    public Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
+    public virtual async Task<T?> GetByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        return await _dbSet.FindAsync(id);
     }
 
-    public Task<IEnumerable<T>> GetAllAsync()
+    public virtual async Task RemoveAsync(T entity)
     {
-        throw new NotImplementedException();
+        _dbSet.Remove(entity);
+        await _context.SaveChangesAsync();
     }
 
-    public async Task<T> GetByIdAsync(int id)
+    public virtual async Task RemoveRangeAsync(IEnumerable<T> entities)
     {
-        return await _context.Set<T>().FindAsync(id);
+        _dbSet.RemoveRange(entities);
+        await _context.SaveChangesAsync();
     }
 
-    public Task<bool> SaveChangesAsync()
+    public virtual async Task SaveChangesAsync()
     {
-        throw new NotImplementedException();
+        await _context.SaveChangesAsync();
     }
 
-    public Task UpdateAsync(T entity)
+    public virtual async Task<T> UpdateAsync(T entity)
     {
-        throw new NotImplementedException();
+        _dbSet.Update(entity);
+        await _context.SaveChangesAsync();
+        return entity;
     }
 
-    public Task<IEnumerable<T>> UpdateRangeAsync(IEnumerable<T> entities)
+    public virtual async Task<IEnumerable<T>> UpdateRangeAsync(IEnumerable<T> entities)
     {
-        throw new NotImplementedException();
+        _dbSet.UpdateRange(entities);
+        await _context.SaveChangesAsync();
+        return entities;
     }
+
+
 }
