@@ -22,8 +22,9 @@ public class WorkorderRepository : Repository<Workorder>, IWorkorderRepository
     public async Task<IEnumerable<Workorder>> GetByDateRangeAsync(DateTime startDate, DateTime endDate)
     {
         return await _dbSet
-            .Where(w => DateTime.Parse(w.Plannedstarttime) >= startDate && 
-                       DateTime.Parse(w.Plannedstarttime) <= endDate)
+            .Where(w => w.Plannedstarttime != null &&
+                        DateTime.Parse(w.Plannedstarttime) >= startDate &&
+                        DateTime.Parse(w.Plannedstarttime) <= endDate)
             .ToListAsync();
     }
 
@@ -80,8 +81,8 @@ public class WorkorderRepository : Repository<Workorder>, IWorkorderRepository
     {
         var now = DateTime.Now;
         return await _dbSet
-            .Where(w => w.Status != WorkorderStatus.Completed && 
-                       w.Status != WorkorderStatus.Cancelled &&
+            .Where(w => w.Status != WorkorderStatus.Completed &&
+                       w.Status != WorkorderStatus.Cancelled && w.Plannedendtime != null &&
                        DateTime.Parse(w.Plannedendtime) < now)
             .ToListAsync();
     }
@@ -89,8 +90,9 @@ public class WorkorderRepository : Repository<Workorder>, IWorkorderRepository
     public async Task<IEnumerable<Workorder>> GetTodayWorkordersAsync()
     {
         var today = DateTime.Today;
+
         return await _dbSet
-            .Where(w => DateTime.Parse(w.Plannedstarttime).Date == today)
+            .Where(w => w.Plannedstarttime != null &&  DateTime.Parse(w.Plannedstarttime).Date == today)
             .ToListAsync();
     }
 
@@ -99,7 +101,7 @@ public class WorkorderRepository : Repository<Workorder>, IWorkorderRepository
         var workorder = await _dbSet
             .Where(w => w.Orderid == orderId)
             .FirstOrDefaultAsync();
-        
+
         if (workorder != null)
         {
             workorder.Actualstarttime = actualStartTime;
@@ -113,7 +115,7 @@ public class WorkorderRepository : Repository<Workorder>, IWorkorderRepository
         var workorder = await _dbSet
             .Where(w => w.Orderid == orderId)
             .FirstOrDefaultAsync();
-        
+
         if (workorder != null)
         {
             workorder.Priority = priority;
@@ -126,7 +128,7 @@ public class WorkorderRepository : Repository<Workorder>, IWorkorderRepository
         var workorder = await _dbSet
             .Where(w => w.Orderid == orderId)
             .FirstOrDefaultAsync();
-        
+
         if (workorder != null)
         {
             workorder.Actualproduction = actualProduction;
@@ -140,7 +142,7 @@ public class WorkorderRepository : Repository<Workorder>, IWorkorderRepository
         var workorder = await _dbSet
             .Where(w => w.Orderid == orderId)
             .FirstOrDefaultAsync();
-        
+
         if (workorder != null)
         {
             workorder.Status = status;
