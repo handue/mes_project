@@ -4,7 +4,9 @@ namespace OracleMES.Core.Interfaces.Repositories;
 
 public interface IBillofmaterialRepository : IRepository<Billofmaterial>
 {
-    Task<IEnumerable<Billofmaterial>> GetByProductAsync(decimal productId); 
+    Task<IEnumerable<Billofmaterial>> GetByProductAsync(decimal productId);
+
+    Task<Billofmaterial> GetByBomIdAsync(decimal bomId);
     Task<IEnumerable<Billofmaterial>> GetByComponentAsync(decimal componentId); 
     Task<IEnumerable<Billofmaterial>> GetByQuantityRangeAsync(decimal minQuantity, decimal maxQuantity); 
     Task<IEnumerable<Billofmaterial>> GetByScrapFactorRangeAsync(decimal minScrap, decimal maxScrap); 
