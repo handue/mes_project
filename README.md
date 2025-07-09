@@ -403,27 +403,64 @@ chore: 빌드 프로세스 수정 | Update build process
 - [x] 프로젝트 구조 설정 | Project structure setup
 - [x] Oracle DB 연동 | Oracle DB integration
 - [x] Entity Framework 설정 | Entity Framework configuration
-- [ ] 작업지시서 CRUD API | Work Order CRUD API
-- [ ] 생산 실적 API | Production records API
-- [ ] OEE 계산 로직 | OEE calculation logic
+- [x] Repository 패턴 구현 | Repository pattern implementation
+- [x] DI 컨테이너 설정 | Dependency injection setup
+- [ ] **Controller API 개발 | Controller API Development** 🔄
+  - [ ] WorkorderController (작업지시서 관리) | Work Order Management
+  - [ ] MachineController (설비 관리) | Machine Management
+  - [ ] EmployeeController (직원 관리) | Employee Management
+  - [ ] QualitycontrolController (품질 관리) | Quality Control
+  - [ ] InventoryController (재고 관리) | Inventory Management
+  - [ ] OeemetricController (OEE 분석) | OEE Analysis
+  - [ ] ProductionController (생산 실적) | Production Records
+  - [ ] DashboardController (대시보드) | Dashboard
 
-### Phase 2: 고급 기능 | Advanced Features
-- [ ] 실시간 모니터링 (SignalR) | Real-time monitoring (SignalR)
-- [ ] 품질 관리 시스템 | Quality management system
-- [ ] 리포팅 및 분석 | Reporting and analytics
-- [ ] 사용자 인증/권한 | User authentication/authorization
+### Phase 2: 비즈니스 로직 및 서비스 | Business Logic & Services
+- [ ] 비즈니스 서비스 구현 | Business service implementation
+  - [ ] WorkorderService (작업지시서 비즈니스 로직) | Work Order Business Logic
+  - [ ] OeeCalculationService (OEE 계산 서비스) | OEE Calculation Service
+  - [ ] ProductionTrackingService (생산 추적 서비스) | Production Tracking Service
+- [ ] DTO 및 AutoMapper 설정 | DTO and AutoMapper configuration
+- [ ] 입력 검증 (FluentValidation) | Input validation (FluentValidation)
+- [ ] 예외 처리 및 로깅 | Exception handling and logging
 
-### Phase 3: 프론트엔드 개발 | Frontend Development
+### Phase 3: 인증 및 보안 | Authentication & Security
+- [ ] JWT 인증 구현 | JWT authentication implementation
+- [ ] 사용자 관리 API | User management API
+- [ ] 역할 기반 권한 관리 | Role-based access control
+- [ ] API 보안 강화 | API security enhancement
+
+### Phase 4: 실시간 기능 | Real-time Features
+- [ ] SignalR Hub 구현 | SignalR Hub implementation
+- [ ] 실시간 생산 모니터링 | Real-time production monitoring
+- [ ] 실시간 알림 시스템 | Real-time notification system
+- [ ] WebSocket 연결 관리 | WebSocket connection management
+
+### Phase 5: 프론트엔드 개발 | Frontend Development
 - [ ] React 프로젝트 설정 | React project setup
-- [ ] 대시보드 UI | Dashboard UI
-- [ ] 실시간 차트 | Real-time charts
-- [ ] 모바일 반응형 | Mobile responsive
+- [ ] 대시보드 UI 구현 | Dashboard UI implementation
+- [ ] 실시간 차트 및 그래프 | Real-time charts and graphs
+- [ ] 모바일 반응형 디자인 | Mobile responsive design
+- [ ] 사용자 인증 UI | User authentication UI
 
-### Phase 4: 배포 및 최적화 | Deployment & Optimization
+### Phase 6: 테스트 및 품질 | Testing & Quality
+- [ ] 단위 테스트 작성 | Unit test writing
+- [ ] 통합 테스트 구현 | Integration test implementation
+- [ ] API 테스트 자동화 | API test automation
+- [ ] 성능 테스트 | Performance testing
+
+### Phase 7: 배포 및 최적화 | Deployment & Optimization
 - [ ] Docker 컨테이너화 | Docker containerization
-- [ ] CI/CD 파이프라인 | CI/CD pipeline
-- [ ] 성능 최적화 | Performance optimization
-- [ ] 보안 강화 | Security enhancement
+- [ ] CI/CD 파이프라인 구축 | CI/CD pipeline setup
+- [ ] 데이터베이스 최적화 | Database optimization
+- [ ] API 성능 최적화 | API performance optimization
+- [ ] 보안 감사 및 강화 | Security audit and enhancement
+
+### Phase 8: 고급 기능 | Advanced Features
+- [ ] 리포팅 시스템 | Reporting system
+- [ ] 데이터 분석 및 예측 | Data analytics and prediction
+- [ ] 모바일 앱 개발 | Mobile app development
+- [ ] 외부 시스템 연동 | External system integration
 
 ## 📄 라이센스 | License
 
