@@ -44,7 +44,7 @@ public class QualityControlService
     {
         var qualityCheck = await _qualityControlRepository.GetByIdAsync(checkId);
         if (qualityCheck == null)
-            throw new NotFoundException($"Quality check with ID {checkId} not found");
+            throw new AppException($"Quality check with ID {checkId} not found", ErrorCodes.NotFound);
 
         // 결과 유효성 검증
         ValidateQualityResult(result, defectRate, reworkRate, yieldRate);
@@ -57,7 +57,7 @@ public class QualityControlService
     {
         var qualityCheck = await _qualityControlRepository.GetByIdAsync(checkId);
         if (qualityCheck == null)
-            throw new NotFoundException($"Quality check with ID {checkId} not found");
+            throw new AppException($"Quality check with ID {checkId} not found", ErrorCodes.NotFound);
 
         if (qualityCheck.Result != "Pending")
             throw new InvalidOperationException($"Quality check is already completed with result: {qualityCheck.Result}");
@@ -80,7 +80,7 @@ public class QualityControlService
                 yieldRate = 70;
                 break;
             default:
-                throw new ValidationException($"Invalid quality result: {result}");
+                throw new AppException($"Invalid quality result: {result}", ErrorCodes.ValidationError);
         }
 
         qualityCheck.Comments = comments;
@@ -255,25 +255,25 @@ public class QualityControlService
         // 작업지시 존재 확인
         var workorder = await _workorderRepository.GetByIdAsync(qualityCheck.Orderid);
         if (workorder == null)
-            throw new ValidationException($"Workorder with ID {qualityCheck.Orderid} not found");
+            throw new AppException($"Workorder with ID {qualityCheck.Orderid} not found", ErrorCodes.NotFound);
 
         // 검사원 존재 확인 (제공된 경우)
         if (qualityCheck.Inspectorid.HasValue)
         {
             var inspector = await _employeeRepository.GetByIdAsync(qualityCheck.Inspectorid.Value);
             if (inspector == null)
-                throw new ValidationException($"Inspector with ID {qualityCheck.Inspectorid} not found");
+                throw new AppException($"Inspector with ID {qualityCheck.Inspectorid} not found", ErrorCodes.NotFound);
         }
 
         // 비율 값 검증
         if (qualityCheck.Defectrate.HasValue && (qualityCheck.Defectrate < 0 || qualityCheck.Defectrate > 100))
-            throw new ValidationException("Defect rate must be between 0 and 100");
+            throw new AppException("Defect rate must be between 0 and 100", ErrorCodes.ValidationError);
 
         if (qualityCheck.Reworkrate.HasValue && (qualityCheck.Reworkrate < 0 || qualityCheck.Reworkrate > 100))
-            throw new ValidationException("Rework rate must be between 0 and 100");
+            throw new AppException("Rework rate must be between 0 and 100", ErrorCodes.ValidationError);
 
         if (qualityCheck.Yieldrate.HasValue && (qualityCheck.Yieldrate < 0 || qualityCheck.Yieldrate > 100))
-            throw new ValidationException("Yield rate must be between 0 and 100");
+            throw new AppException("Yield rate must be between 0 and 100", ErrorCodes.ValidationError);
     }
 
     // 불량 유효성 검증
@@ -282,34 +282,34 @@ public class QualityControlService
         // 품질 검사 존재 확인
         var qualityCheck = await _qualityControlRepository.GetByIdAsync(defect.Checkid);
         if (qualityCheck == null)
-            throw new ValidationException($"Quality check with ID {defect.Checkid} not found");
+            throw new AppException($"Quality check with ID {defect.Checkid} not found", ErrorCodes.NotFound);
 
         // 필수 필드 검증
         if (string.IsNullOrEmpty(defect.Defecttype))
-            throw new ValidationException("Defect type is required");
+            throw new AppException("Defect type is required", ErrorCodes.ValidationError);
 
         if (defect.Severity.HasValue && (defect.Severity < 1 || defect.Severity > 5))
-            throw new ValidationException("Severity must be between 1 and 5");
+            throw new AppException("Severity must be between 1 and 5", ErrorCodes.ValidationError);
 
         if (defect.Quantity.HasValue && defect.Quantity < 0)
-            throw new ValidationException("Defect quantity cannot be negative");
+            throw new AppException("Defect quantity cannot be negative", ErrorCodes.ValidationError);
     }
 
     // 품질 결과 유효성 검증
     private void ValidateQualityResult(string result, decimal defectRate, decimal reworkRate, decimal yieldRate)
     {
         if (defectRate < 0 || defectRate > 100)
-            throw new ValidationException("Defect rate must be between 0 and 100");
+            throw new AppException("Defect rate must be between 0 and 100", ErrorCodes.ValidationError);
 
         if (reworkRate < 0 || reworkRate > 100)
-            throw new ValidationException("Rework rate must be between 0 and 100");
+            throw new AppException("Rework rate must be between 0 and 100", ErrorCodes.ValidationError);
 
         if (yieldRate < 0 || yieldRate > 100)
-            throw new ValidationException("Yield rate must be between 0 and 100");
+            throw new AppException("Yield rate must be between 0 and 100", ErrorCodes.ValidationError);
 
         // 비율 합계 검증
         if (defectRate + reworkRate + yieldRate > 100)
-            throw new ValidationException("Sum of defect rate, rework rate, and yield rate cannot exceed 100%");
+            throw new AppException("Sum of defect rate, rework rate, and yield rate cannot exceed 100%", ErrorCodes.ValidationError);
     }
 }
 

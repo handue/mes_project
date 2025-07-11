@@ -38,23 +38,23 @@ public class InventoryService
     {
         var inventory = await _inventoryRepository.GetByIdAsync(itemId);
         if (inventory == null)
-            throw new NotFoundException($"Inventory item with ID {itemId} not found");
+            throw new AppException($"Inventory item with ID {itemId} not found", ErrorCodes.NotFound);
 
         if (newQuantity < 0)
-            throw new ValidationException("Stock quantity cannot be negative");
+            throw new AppException("Stock quantity cannot be negative", ErrorCodes.ValidationError);
 
         await _inventoryRepository.UpdateStockAsync(itemId, newQuantity);
     }
 
     // 재고 입고
-    public async Task ReceiveStockAsync(decimal itemId, decimal quantity, string lotNumber = null)
+    public async Task ReceiveStockAsync(decimal itemId, decimal quantity, string? lotNumber = null)
     {
         var inventory = await _inventoryRepository.GetByIdAsync(itemId);
         if (inventory == null)
-            throw new NotFoundException($"Inventory item with ID {itemId} not found");
+            throw new AppException($"Inventory item with ID {itemId} not found", ErrorCodes.NotFound);
 
         if (quantity <= 0)
-            throw new ValidationException("Receive quantity must be greater than 0");
+            throw new AppException("Receive quantity must be greater than 0", ErrorCodes.ValidationError);
 
         var newQuantity = inventory.Quantity + quantity;
         await _inventoryRepository.UpdateStockAsync(itemId, newQuantity);
@@ -74,13 +74,13 @@ public class InventoryService
     {
         var inventory = await _inventoryRepository.GetByIdAsync(itemId);
         if (inventory == null)
-            throw new NotFoundException($"Inventory item with ID {itemId} not found");
+            throw new AppException($"Inventory item with ID {itemId} not found", ErrorCodes.NotFound);
 
         if (quantity <= 0)
-            throw new ValidationException("Issue quantity must be greater than 0");
+            throw new AppException("Issue quantity must be greater than 0", ErrorCodes.ValidationError);
 
         if (inventory.Quantity < quantity)
-            throw new ValidationException($"Insufficient stock. Available: {inventory.Quantity}, Requested: {quantity}");
+            throw new AppException($"Insufficient stock. Available: {inventory.Quantity}, Requested: {quantity}", ErrorCodes.ValidationError);
 
         var newQuantity = inventory.Quantity - quantity;
         await _inventoryRepository.UpdateStockAsync(itemId, newQuantity);
@@ -91,11 +91,11 @@ public class InventoryService
     {
         var inventory = await _inventoryRepository.GetByIdAsync(itemId);
         if (inventory == null)
-            throw new NotFoundException($"Inventory item with ID {itemId} not found");
+            throw new AppException($"Inventory item with ID {itemId} not found", ErrorCodes.NotFound);
 
         var newQuantity = inventory.Quantity + adjustment;
         if (newQuantity < 0)
-            throw new ValidationException("Stock adjustment would result in negative quantity");
+            throw new AppException("Stock adjustment would result in negative quantity", ErrorCodes.ValidationError);
 
         await _inventoryRepository.UpdateStockAsync(itemId, newQuantity);
     }
@@ -240,24 +240,24 @@ public class InventoryService
         {
             var supplier = await _supplierRepository.GetByIdAsync(inventory.Supplierid.Value);
             if (supplier == null)
-                throw new ValidationException($"Supplier with ID {inventory.Supplierid} not found");
+                throw new AppException($"Supplier with ID {inventory.Supplierid} not found", ErrorCodes.NotFound);
         }
 
         // 필수 필드 검증
         if (string.IsNullOrEmpty(inventory.Name))
-            throw new ValidationException("Item name is required");
+            throw new AppException("Item name is required", ErrorCodes.ValidationError);
 
         if (inventory.Quantity < 0)
-            throw new ValidationException("Initial quantity cannot be negative");
+            throw new AppException("Initial quantity cannot be negative", ErrorCodes.ValidationError);
 
         if (inventory.Reorderlevel < 0)
-            throw new ValidationException("Reorder level cannot be negative");
+            throw new AppException("Reorder level cannot be negative", ErrorCodes.ValidationError);
 
         if (inventory.Leadtime < 0)
-            throw new ValidationException("Lead time cannot be negative");
+            throw new AppException("Lead time cannot be negative", ErrorCodes.ValidationError);
 
         if (inventory.Cost < 0)
-            throw new ValidationException("Cost cannot be negative");
+            throw new AppException("Cost cannot be negative", ErrorCodes.ValidationError);
     }
 }
 
