@@ -41,7 +41,7 @@ public class ProductService
     {
         var existingProduct = await _productRepository.GetByIdAsync(product.Productid);
         if (existingProduct == null)
-            throw new NotFoundException($"Product with ID {product.Productid} not found");
+            throw new AppException($"Product with ID {product.Productid} not found", ErrorCodes.NotFound);
 
         await ValidateProductAsync(product);
         await _productRepository.UpdateAsync(product);
@@ -52,7 +52,7 @@ public class ProductService
     {
         var product = await _productRepository.GetByIdAsync(productId);
         if (product == null)
-            throw new NotFoundException($"Product with ID {productId} not found");
+            throw new AppException($"Product with ID {productId} not found", ErrorCodes.NotFound);
 
         product.Isactive = isActive ? 1 : 0;
         await _productRepository.UpdateAsync(product);
@@ -62,7 +62,7 @@ public class ProductService
     public async Task UpdateProductProcessTimeAsync(decimal productId, decimal standardProcessTime)
     {
         if (standardProcessTime < 0)
-            throw new ValidationException("Standard process time cannot be negative");
+            throw new AppException("Standard process time cannot be negative", ErrorCodes.ValidationError);
 
         await _productRepository.UpdateProcessTimeAsync(productId, standardProcessTime);
     }
@@ -111,7 +111,7 @@ public class ProductService
     {
         var product = await _productRepository.GetByIdAsync(productId);
         if (product == null)
-            throw new NotFoundException($"Product with ID {productId} not found");
+            throw new AppException($"Product with ID {productId} not found", ErrorCodes.NotFound);
 
         var bomItems = await _bomRepository.GetByProductAsync(productId);
         var bomTree = new ProductBOMTree
@@ -123,13 +123,13 @@ public class ProductService
 
         foreach (var bom in bomItems)
         {
-            var material = await _inventoryRepository.GetByIdAsync(bom.Materialid);
+            var material = await _inventoryRepository.GetByIdAsync(bom.Componentid);
             bomTree.BOMItems.Add(new BOMItemInfo
             {
-                MaterialId = bom.Materialid,
+                MaterialId = bom.Componentid,
                 MaterialName = material?.Name ?? "Unknown",
                 Quantity = bom.Quantity,
-                Unit = bom.Unit ?? "PCS"
+                Unit = "PCS" // 기본값으로 설정
             });
         }
 
@@ -141,7 +141,7 @@ public class ProductService
     {
         var product = await _productRepository.GetByIdAsync(productId);
         if (product == null)
-            throw new NotFoundException($"Product with ID {productId} not found");
+            throw new AppException($"Product with ID {productId} not found", ErrorCodes.NotFound);
 
         var bomItems = await _bomRepository.GetByProductAsync(productId);
         var materialCosts = new List<MaterialCostInfo>();
@@ -149,13 +149,13 @@ public class ProductService
 
         foreach (var bom in bomItems)
         {
-            var material = await _inventoryRepository.GetByIdAsync(bom.Materialid);
+            var material = await _inventoryRepository.GetByIdAsync(bom.Componentid);
             if (material != null)
             {
                 var materialCost = bom.Quantity * material.Cost;
                 materialCosts.Add(new MaterialCostInfo
                 {
-                    MaterialId = bom.Materialid,
+                    MaterialId = bom.Componentid,
                     MaterialName = material.Name,
                     Quantity = bom.Quantity,
                     UnitCost = material.Cost,
@@ -195,7 +195,7 @@ public class ProductService
     {
         var product = await _productRepository.GetByIdAsync(productId);
         if (product == null)
-            throw new NotFoundException($"Product with ID {productId} not found");
+            throw new AppException($"Product with ID {productId} not found", ErrorCodes.NotFound);
 
         var workorders = await _workorderRepository.GetByProductAsync(productId);
         var periodWorkorders = workorders.Where(w => 
@@ -259,7 +259,7 @@ public class ProductService
         return new ProductCategoryReport
         {
             CategoryReports = categoryReports,
-            TotalProducts = allProducts.Count,
+            TotalProducts = allProducts.Count(),
             TotalActiveProducts = allProducts.Count(p => p.Isactive == 1),
             OverallAverageCost = allProducts.Any() ? Math.Round(allProducts.Average(p => p.Cost), 2) : 0
         };
@@ -270,18 +270,18 @@ public class ProductService
     {
         // 필수 필드 검증
         if (string.IsNullOrEmpty(product.Name))
-            throw new ValidationException("Product name is required");
+            throw new AppException("Product name is required", ErrorCodes.ValidationError);
 
         if (product.Cost < 0)
-            throw new ValidationException("Product cost cannot be negative");
+            throw new AppException("Product cost cannot be negative", ErrorCodes.ValidationError);
 
         if (product.Standardprocesstime.HasValue && product.Standardprocesstime < 0)
-            throw new ValidationException("Standard process time cannot be negative");
+            throw new AppException("Standard process time cannot be negative", ErrorCodes.ValidationError);
 
         // 카테고리 유효성 검증 (선택적)
         var validCategories = new[] { "Raw Material", "Semi-Finished", "Finished Good", "Spare Part", "Tool" };
         if (!string.IsNullOrEmpty(product.Category) && !validCategories.Contains(product.Category))
-            throw new ValidationException($"Invalid category: {product.Category}. Valid categories are: {string.Join(", ", validCategories)}");
+            throw new AppException($"Invalid category: {product.Category}. Valid categories are: {string.Join(", ", validCategories)}", ErrorCodes.ValidationError);
     }
 
     // BOM 유효성 검증
@@ -290,16 +290,16 @@ public class ProductService
         // 제품 존재 확인
         var product = await _productRepository.GetByIdAsync(bom.Productid);
         if (product == null)
-            throw new ValidationException($"Product with ID {bom.Productid} not found");
+            throw new AppException($"Product with ID {bom.Productid} not found", ErrorCodes.NotFound);
 
         // 재료 존재 확인
-        var material = await _inventoryRepository.GetByIdAsync(bom.Materialid);
+        var material = await _inventoryRepository.GetByIdAsync(bom.Componentid);
         if (material == null)
-            throw new ValidationException($"Material with ID {bom.Materialid} not found");
+            throw new AppException($"Material with ID {bom.Componentid} not found", ErrorCodes.NotFound);
 
         // 수량 검증
         if (bom.Quantity <= 0)
-            throw new ValidationException("BOM quantity must be greater than 0");
+            throw new AppException("BOM quantity must be greater than 0", ErrorCodes.ValidationError);
     }
 }
 

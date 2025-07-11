@@ -49,7 +49,7 @@ public class MaterialConsumptionService
     {
         var existingConsumption = await _materialConsumptionRepository.GetByIdAsync(consumption.Consumptionid);
         if (existingConsumption == null)
-            throw new NotFoundException($"Material consumption with ID {consumption.Consumptionid} not found");
+            throw new AppException($"Material consumption with ID {consumption.Consumptionid} not found", ErrorCodes.NotFound);
 
         await ValidateMaterialConsumptionAsync(consumption);
         
@@ -99,6 +99,7 @@ public class MaterialConsumptionService
             return new MaterialConsumptionReport { StartDate = startDate, EndDate = endDate };
 
         var totalPlannedQuantity = consumptions.Sum(c => c.Plannedquantity);
+        
         var totalActualQuantity = consumptions.Where(c => c.Actualquantity.HasValue).Sum(c => c.Actualquantity.Value);
         var totalVariance = totalActualQuantity - totalPlannedQuantity;
         var averageVariancePercent = consumptions.Where(c => c.Variancepercent.HasValue).Average(c => c.Variancepercent.Value);
@@ -153,7 +154,8 @@ public class MaterialConsumptionService
                 ActualQuantity = actualQty,
                 Variance = variance,
                 VariancePercent = Math.Round(variancePercent, 2),
-                MaterialCount = workorderConsumptions.Count
+                MaterialCount = workorderConsumptions.Count,
+                TotalVariance = variance
             });
         }
 
@@ -178,7 +180,7 @@ public class MaterialConsumptionService
         
         var material = await _inventoryRepository.GetByIdAsync(itemId);
         if (material == null)
-            throw new NotFoundException($"Material with ID {itemId} not found");
+            throw new AppException($"Material with ID {itemId} not found", ErrorCodes.NotFound);
 
         var trendData = new List<ConsumptionTrendPoint>();
 
@@ -239,8 +241,7 @@ public class MaterialConsumptionService
                     MaterialName = material.Name,
                     Quantity = consumption.Actualquantity.Value,
                     UnitCost = material.Cost,
-                    TotalCost = cost,
-                    ConsumptionDate = DateTime.Parse(consumption.Consumptiondate ?? DateTime.Now.ToString("yyyy-MM-dd"))
+                    TotalCost = cost
                 });
                 totalCost += cost;
             }
@@ -294,25 +295,25 @@ public class MaterialConsumptionService
         // 작업지시 존재 확인
         var workorder = await _workorderRepository.GetByIdAsync(consumption.Orderid);
         if (workorder == null)
-            throw new ValidationException($"Workorder with ID {consumption.Orderid} not found");
+            throw new AppException($"Workorder with ID {consumption.Orderid} not found", ErrorCodes.NotFound);
 
         // 자재 존재 확인
         var material = await _inventoryRepository.GetByIdAsync(consumption.Itemid);
         if (material == null)
-            throw new ValidationException($"Material with ID {consumption.Itemid} not found");
+            throw new AppException($"Material with ID {consumption.Itemid} not found", ErrorCodes.NotFound);
 
         // 수량 검증
         if (consumption.Plannedquantity <= 0)
-            throw new ValidationException("Planned quantity must be greater than 0");
+            throw new AppException("Planned quantity must be greater than 0", ErrorCodes.ValidationError);
 
         if (consumption.Actualquantity.HasValue && consumption.Actualquantity < 0)
-            throw new ValidationException("Actual quantity cannot be negative");
+            throw new AppException("Actual quantity cannot be negative", ErrorCodes.ValidationError);
 
         // 재고 확인 (실제 소비량이 계획량보다 많은 경우)
         if (consumption.Actualquantity.HasValue && consumption.Actualquantity > consumption.Plannedquantity)
         {
             if (material.Quantity < (consumption.Actualquantity.Value - consumption.Plannedquantity))
-                throw new ValidationException("Insufficient inventory for additional consumption");
+                throw new AppException("Insufficient inventory for additional consumption", ErrorCodes.ValidationError);
         }
     }
 }
@@ -352,6 +353,7 @@ public class WorkorderConsumptionAnalysis
     public decimal Variance { get; set; }
     public decimal VariancePercent { get; set; }
     public int MaterialCount { get; set; }
+    public decimal TotalVariance { get; set; }
 }
 
 // 자재 소비 트렌드 리포트 클래스
@@ -386,16 +388,6 @@ public class MaterialCostAnalysis
     public List<MaterialCostInfo> MaterialCosts { get; set; } = new();
     public decimal TotalCost { get; set; }
     public decimal AverageCostPerDay { get; set; }
-}
-
-public class MaterialCostInfo
-{
-    public decimal MaterialId { get; set; }
-    public string MaterialName { get; set; } = string.Empty;
-    public decimal Quantity { get; set; }
-    public decimal UnitCost { get; set; }
-    public decimal TotalCost { get; set; }
-    public DateTime ConsumptionDate { get; set; }
 }
 
 // 자재 소비 알림 클래스
