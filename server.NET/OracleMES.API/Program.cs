@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using OracleMES.API.Middleware;
 using OracleMES.Core.Interfaces.Repositories;
+using OracleMES.Core.Services;
 using OracleMES.Infrastructure.Data;
 using OracleMES.Infrastructure.Repositories;
 
@@ -33,6 +34,18 @@ builder.Services.AddScoped<IShiftRepository, ShiftRepository>();
 builder.Services.AddScoped<IMaterialconsumptionRepository, MaterialconsumptionRepository>();
 builder.Services.AddScoped<IDefectRepository, DefectRepository>();
 builder.Services.AddScoped<IBillofmaterialRepository, BillofmaterialRepository>();
+
+// Service Dependency Injection
+builder.Services.AddScoped<WorkorderService>();
+builder.Services.AddScoped<MachineService>();
+builder.Services.AddScoped<InventoryService>();
+builder.Services.AddScoped<QualityControlService>();
+builder.Services.AddScoped<OEEService>();
+builder.Services.AddScoped<EmployeeService>();
+builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<DowntimeService>();
+builder.Services.AddScoped<WorkcenterService>();
+builder.Services.AddScoped<MaterialConsumptionService>();
 
 // CORS setup
 builder.Services.AddCors(options =>

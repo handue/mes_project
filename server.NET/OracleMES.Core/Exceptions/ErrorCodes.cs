@@ -12,6 +12,7 @@ public static class ErrorCodes
     public const string BusinessRuleViolation = "BUSINESS_RULE_VIOLATION";
     public const string InternalServerError = "INTERNAL_SERVER_ERROR";
     public const string BadRequest = "BAD_REQUEST";
+    
 
     // MES 관련 에러 코드
     public const string MachineFailure = "MACHINE_FAILURE";

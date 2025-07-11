@@ -40,9 +40,6 @@ public class GlobalExceptionMiddleware(
         }
         catch (Exception ex)
         {
-
-
-
             await HandleExceptionAsync(context, ex);
         }
 
