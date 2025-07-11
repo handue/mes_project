@@ -47,11 +47,11 @@ public class DowntimeService
     }
 
     // 다운타임 종료
-    public async Task EndDowntimeAsync(decimal downtimeId, string endTime = null)
+    public async Task EndDowntimeAsync(decimal downtimeId, string? endTime = null)
     {
         var downtime = await _downtimeRepository.GetByIdAsync(downtimeId);
         if (downtime == null)
-            throw new NotFoundException($"Downtime with ID {downtimeId} not found");
+            throw new AppException($"Downtime with ID {downtimeId} not found", ErrorCodes.NotFound);
 
         if (!string.IsNullOrEmpty(downtime.Endtime))
             throw new InvalidOperationException("Downtime is already ended");
@@ -297,14 +297,14 @@ public class DowntimeService
         // 설비 존재 확인
         var machine = await _machineRepository.GetByIdAsync(downtime.Machineid);
         if (machine == null)
-            throw new ValidationException($"Machine with ID {downtime.Machineid} not found");
+            throw new AppException($"Machine with ID {downtime.Machineid} not found", ErrorCodes.NotFound);
 
         // 작업지시 존재 확인 (제공된 경우)
         if (downtime.Orderid.HasValue)
         {
             var workorder = await _workorderRepository.GetByIdAsync(downtime.Orderid.Value);
             if (workorder == null)
-                throw new ValidationException($"Workorder with ID {downtime.Orderid} not found");
+                throw new AppException($"Workorder with ID {downtime.Orderid} not found", ErrorCodes.NotFound);
         }
 
         // 신고자 존재 확인 (제공된 경우)
@@ -312,15 +312,15 @@ public class DowntimeService
         {
             var employee = await _employeeRepository.GetByIdAsync(downtime.Reportedby.Value);
             if (employee == null)
-                throw new ValidationException($"Employee with ID {downtime.Reportedby} not found");
+                throw new AppException($"Employee with ID {downtime.Reportedby} not found", ErrorCodes.NotFound);
         }
 
         // 필수 필드 검증
         if (string.IsNullOrEmpty(downtime.Reason))
-            throw new ValidationException("Downtime reason is required");
+            throw new AppException("Downtime reason is required", ErrorCodes.ValidationError);
 
         if (string.IsNullOrEmpty(downtime.Category))
-            throw new ValidationException("Downtime category is required");
+            throw new AppException("Downtime category is required", ErrorCodes.ValidationError);
 
         // 시간 유효성 검증
         if (!string.IsNullOrEmpty(downtime.Starttime) && !string.IsNullOrEmpty(downtime.Endtime))
@@ -329,14 +329,14 @@ public class DowntimeService
                 DateTime.TryParse(downtime.Endtime, out var endTime))
             {
                 if (endTime <= startTime)
-                    throw new ValidationException("End time must be after start time");
+                    throw new AppException("End time must be after start time", ErrorCodes.ValidationError);
             }
         }
 
         // 카테고리 유효성 검증
         var validCategories = new[] { "Planned", "Unplanned", "Breakdown", "Maintenance", "Setup", "Power", "Other" };
         if (!validCategories.Contains(downtime.Category))
-            throw new ValidationException($"Invalid category: {downtime.Category}. Valid categories are: {string.Join(", ", validCategories)}");
+            throw new AppException($"Invalid category: {downtime.Category}. Valid categories are: {string.Join(", ", validCategories)}", ErrorCodes.ValidationError);
     }
 }
 

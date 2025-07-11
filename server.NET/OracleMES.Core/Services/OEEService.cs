@@ -44,7 +44,7 @@ public class OEEService
     {
         var machine = await _machineRepository.GetByIdAsync(machineId);
         if (machine == null)
-            throw new NotFoundException($"Machine with ID {machineId} not found");
+            throw new AppException($"Machine with ID {machineId} not found", ErrorCodes.NotFound);
 
         // 가용성 계산
         var availability = await CalculateAvailabilityAsync(machineId, date);
@@ -197,7 +197,7 @@ public class OEEService
     {
         var machine = await _machineRepository.GetByIdAsync(machineId);
         if (machine == null)
-            throw new NotFoundException($"Machine with ID {machineId} not found");
+            throw new AppException($"Machine with ID {machineId} not found", ErrorCodes.NotFound);
 
         var oeeMetrics = await _oeeRepository.GetByDateRangeAsync(startDate, endDate);
         var machineMetrics = oeeMetrics.Where(o => o.Machineid == machineId).OrderBy(o => o.Date);
@@ -301,7 +301,7 @@ public class OEEService
     }
 
     // 특정 날짜의 설비 OEE 메트릭 조회
-    private async Task<Oeemetric> GetOEEMetricByMachineAndDateAsync(decimal machineId, DateTime date)
+    private async Task<Oeemetric?> GetOEEMetricByMachineAndDateAsync(decimal machineId, DateTime date)
     {
         var metrics = await _oeeRepository.GetByMachineAsync(machineId);
         return metrics.FirstOrDefault(m => 
@@ -315,20 +315,20 @@ public class OEEService
         // 설비 존재 확인
         var machine = await _machineRepository.GetByIdAsync(oeeMetric.Machineid);
         if (machine == null)
-            throw new ValidationException($"Machine with ID {oeeMetric.Machineid} not found");
+            throw new AppException($"Machine with ID {oeeMetric.Machineid} not found", ErrorCodes.NotFound);
 
         // 비율 값 검증
         if (oeeMetric.Availability.HasValue && (oeeMetric.Availability < 0 || oeeMetric.Availability > 100))
-            throw new ValidationException("Availability must be between 0 and 100");
+            throw new AppException("Availability must be between 0 and 100", ErrorCodes.ValidationError);
 
         if (oeeMetric.Performance.HasValue && (oeeMetric.Performance < 0 || oeeMetric.Performance > 100))
-            throw new ValidationException("Performance must be between 0 and 100");
+            throw new AppException("Performance must be between 0 and 100", ErrorCodes.ValidationError);
 
         if (oeeMetric.Quality.HasValue && (oeeMetric.Quality < 0 || oeeMetric.Quality > 100))
-            throw new ValidationException("Quality must be between 0 and 100");
+            throw new AppException("Quality must be between 0 and 100", ErrorCodes.ValidationError);
 
         if (oeeMetric.Oee.HasValue && (oeeMetric.Oee < 0 || oeeMetric.Oee > 100))
-            throw new ValidationException("OEE must be between 0 and 100");
+            throw new AppException("OEE must be between 0 and 100", ErrorCodes.ValidationError);
     }
 }
 

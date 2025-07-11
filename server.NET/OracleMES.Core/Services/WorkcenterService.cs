@@ -41,18 +41,19 @@ public class WorkcenterService
     {
         var existingWorkcenter = await _workcenterRepository.GetByIdAsync(workcenter.Workcenterid);
         if (existingWorkcenter == null)
-            throw new NotFoundException($"Workcenter with ID {workcenter.Workcenterid} not found");
+            throw new AppException($"Workcenter with ID {workcenter.Workcenterid} not found", ErrorCodes.NotFound);
 
         await ValidateWorkcenterAsync(workcenter);
         await _workcenterRepository.UpdateAsync(workcenter);
     }
+    
 
     // 작업장 활성화/비활성화
     public async Task UpdateWorkcenterStatusAsync(decimal workcenterId, bool isActive)
     {
         var workcenter = await _workcenterRepository.GetByIdAsync(workcenterId);
         if (workcenter == null)
-            throw new NotFoundException($"Workcenter with ID {workcenterId} not found");
+            throw new AppException($"Workcenter with ID {workcenterId} not found", ErrorCodes.NotFound);
 
         workcenter.Isactive = isActive ? 1 : 0;
         await _workcenterRepository.UpdateAsync(workcenter);
@@ -88,7 +89,7 @@ public class WorkcenterService
     {
         var workcenter = await _workcenterRepository.GetByIdAsync(workcenterId);
         if (workcenter == null)
-            throw new NotFoundException($"Workcenter with ID {workcenterId} not found");
+            throw new AppException($"Workcenter with ID {workcenterId} not found", ErrorCodes.NotFound);
 
         var machines = await _machineRepository.GetByWorkcenterAsync(workcenterId);
         var workorders = await _workorderRepository.GetByWorkcenterAsync(workcenterId);
@@ -138,7 +139,7 @@ public class WorkcenterService
     {
         var workcenter = await _workcenterRepository.GetByIdAsync(workcenterId);
         if (workcenter == null)
-            throw new NotFoundException($"Workcenter with ID {workcenterId} not found");
+            throw new AppException($"Workcenter with ID {workcenterId} not found", ErrorCodes.NotFound);
 
         var workorders = await _workorderRepository.GetByWorkcenterAsync(workcenterId);
         var periodWorkorders = workorders.Where(w => 
@@ -220,21 +221,21 @@ public class WorkcenterService
     {
         // 필수 필드 검증
         if (string.IsNullOrEmpty(workcenter.Name))
-            throw new ValidationException("Workcenter name is required");
+            throw new AppException("Workcenter name is required", ErrorCodes.ValidationError);
 
         if (workcenter.Capacity <= 0)
-            throw new ValidationException("Workcenter capacity must be greater than 0");
+            throw new AppException("Workcenter capacity must be greater than 0", ErrorCodes.ValidationError);
 
         if (string.IsNullOrEmpty(workcenter.Capacityuom))
-            throw new ValidationException("Capacity unit of measure is required");
+            throw new AppException("Capacity unit of measure is required", ErrorCodes.ValidationError);
 
         if (workcenter.Costperhour < 0)
-            throw new ValidationException("Cost per hour cannot be negative");
+            throw new AppException("Cost per hour cannot be negative", ErrorCodes.ValidationError);
 
         // 용량 단위 유효성 검증
         var validUOMs = new[] { "PCS/HOUR", "KG/HOUR", "METER/HOUR", "LITER/HOUR" };
         if (!validUOMs.Contains(workcenter.Capacityuom.ToUpper()))
-            throw new ValidationException($"Invalid capacity UOM: {workcenter.Capacityuom}. Valid UOMs are: {string.Join(", ", validUOMs)}");
+            throw new AppException($"Invalid capacity UOM: {workcenter.Capacityuom}. Valid UOMs are: {string.Join(", ", validUOMs)}", ErrorCodes.ValidationError);
     }
 }
 
