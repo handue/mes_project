@@ -47,8 +47,10 @@ public class WorkorderService
     {
         var workorder = await _workorderRepository.GetByIdAsync(orderId);
         if (workorder == null)
-            throw new NotFoundException($"Workorder with ID {orderId} not found");
+            throw new AppException($"Workorder with ID {orderId} not found", ErrorCodes.NotFound);
 
+
+        
         // 상태 변경 유효성 검증
         ValidateStatusTransition(workorder.Status, newStatus);
 
@@ -74,7 +76,7 @@ public class WorkorderService
     {
         var workorder = await _workorderRepository.GetByIdAsync(orderId);
         if (workorder == null)
-            throw new NotFoundException($"Workorder with ID {orderId} not found");
+            throw new AppException($"Workorder with ID {orderId} not found", ErrorCodes.NotFound);
 
         if (workorder.Status != "Planned" && workorder.Status != "Scheduled")
             throw new InvalidOperationException($"Cannot start workorder in status: {workorder.Status}");
@@ -92,14 +94,14 @@ public class WorkorderService
     {
         var workorder = await _workorderRepository.GetByIdAsync(orderId);
         if (workorder == null)
-            throw new NotFoundException($"Workorder with ID {orderId} not found");
+            throw new AppException($"Workorder with ID {orderId} not found", ErrorCodes.NotFound);
 
         if (workorder.Status != "In Progress")
             throw new InvalidOperationException($"Cannot complete workorder in status: {workorder.Status}");
 
         // 생산량 검증
         if (actualProduction < 0 || scrap < 0)
-            throw new ValidationException("Production and scrap quantities must be non-negative");
+            throw new AppException("Production and scrap quantities must be non-negative", ErrorCodes.ValidationError);
 
         await _workorderRepository.UpdateProductAsync(orderId, actualProduction, scrap);
         await UpdateWorkorderStatusAsync(orderId, "Completed");
@@ -109,7 +111,7 @@ public class WorkorderService
     public async Task UpdatePriorityAsync(decimal orderId, decimal newPriority)
     {
         if (newPriority < 1 || newPriority > 10)
-            throw new ValidationException("Priority must be between 1 and 10");
+            throw new AppException("Priority must be between 1 and 10", ErrorCodes.ValidationError);
 
         await _workorderRepository.UpdatePriorityAsync(orderId, newPriority);
     }
@@ -168,30 +170,30 @@ public class WorkorderService
         // 설비 존재 확인
         var machine = await _machineRepository.GetByIdAsync(workorder.Machineid);
         if (machine == null)
-            throw new ValidationException($"Machine with ID {workorder.Machineid} not found");
+            throw new AppException($"Machine with ID {workorder.Machineid} not found", ErrorCodes.NotFound);
 
         // 직원 존재 확인
         var employee = await _employeeRepository.GetByIdAsync(workorder.Employeeid);
         if (employee == null)
-            throw new ValidationException($"Employee with ID {workorder.Employeeid} not found");
+            throw new AppException($"Employee with ID {workorder.Employeeid} not found", ErrorCodes.NotFound);
 
         // 제품 존재 확인
         var product = await _productRepository.GetByIdAsync(workorder.Productid);
         if (product == null)
-            throw new ValidationException($"Product with ID {workorder.Productid} not found");
+            throw new AppException($"Product with ID {workorder.Productid} not found", ErrorCodes.NotFound);
 
         // 작업장 존재 확인
         var workcenter = await _workcenterRepository.GetByIdAsync(workorder.Workcenterid);
         if (workcenter == null)
-            throw new ValidationException($"Workcenter with ID {workorder.Workcenterid} not found");
+            throw new AppException($"Workcenter with ID {workorder.Workcenterid} not found", ErrorCodes.NotFound);
 
         // 수량 검증
         if (workorder.Quantity <= 0)
-            throw new ValidationException("Quantity must be greater than 0");
+            throw new AppException("Quantity must be greater than 0", ErrorCodes.ValidationError);
 
         // 우선순위 검증
         if (workorder.Priority < 1 || workorder.Priority > 10)
-            throw new ValidationException("Priority must be between 1 and 10");
+            throw new AppException("Priority must be between 1 and 10", ErrorCodes.ValidationError);
     }
 
     // 상태 전환 유효성 검증

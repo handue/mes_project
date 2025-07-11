@@ -25,17 +25,17 @@ public class MachineService
     {
         // 유효성 검증
         await ValidateMachineAsync(machine);
-        
+
         // 기본값 설정
         if (string.IsNullOrEmpty(machine.Status))
             machine.Status = "Available";
-        
+
         if (string.IsNullOrEmpty(machine.Installationdate))
             machine.Installationdate = DateTime.Now.ToString("yyyy-MM-dd");
-        
+
         // 다음 유지보수 날짜 계산
         machine.Nextmaintenancedate = CalculateNextMaintenanceDate(machine.Installationdate, machine.Maintenancefrequency);
-        
+
         return await _machineRepository.AddAsync(machine);
     }
 
@@ -44,8 +44,12 @@ public class MachineService
     {
         var machine = await _machineRepository.GetByIdAsync(machineId);
         if (machine == null)
-            throw new NotFoundException($"Machine with ID {machineId} not found");
+            throw new AppException($"Machine with ID {machineId} not found", ErrorCodes.NotFound);
 
+        if (machine.Status == null)
+        {
+            throw new AppException("Machine status is required", ErrorCodes.ValidationError);
+        }
         // 상태 변경 유효성 검증
         ValidateStatusTransition(machine.Status, newStatus);
 
@@ -57,14 +61,14 @@ public class MachineService
     {
         var machine = await _machineRepository.GetByIdAsync(machineId);
         if (machine == null)
-            throw new NotFoundException($"Machine with ID {machineId} not found");
+            throw new AppException($"Machine with ID {machineId} not found", ErrorCodes.NotFound);
 
         // 마지막 유지보수 날짜 업데이트
         var lastMaintenanceDate = DateTime.Now.ToString("yyyy-MM-dd");
-        
+
         // 다음 유지보수 날짜 계산
         var nextMaintenanceDate = CalculateNextMaintenanceDate(lastMaintenanceDate, machine.Maintenancefrequency);
-        
+
         await _machineRepository.UpdateMaintenanceDateAsync(machineId, nextMaintenanceDate);
         await UpdateMachineStatusAsync(machineId, "Available");
     }
@@ -128,7 +132,7 @@ public class MachineService
     {
         var totalDowntime = await GetTotalMachineDowntimeAsync(machineId, date);
         var totalMinutes = 24 * 60; // 하루 24시간
-        
+
         return Math.Max(0, (totalMinutes - totalDowntime) / totalMinutes * 100);
     }
 
@@ -137,14 +141,14 @@ public class MachineService
     {
         var machine = await _machineRepository.GetByIdAsync(machineId);
         if (machine == null)
-            throw new NotFoundException($"Machine with ID {machineId} not found");
+            throw new AppException($"Machine with ID {machineId} not found", ErrorCodes.NotFound);
 
         var downtimes = await _downtimeRepository.GetByDateRangeAsync(startDate, endDate);
         var machineDowntimes = downtimes.Where(d => d.Machineid == machineId);
 
         var totalDowntime = machineDowntimes.Sum(d => d.Duration ?? 0);
         var totalMinutes = (endDate - startDate).TotalMinutes;
-        var availability = Math.Max(0, (totalMinutes - totalDowntime) / totalMinutes * 100);
+        var availability = Math.Max(0, (totalMinutes - (double)totalDowntime) / totalMinutes * 100);
 
         return new MachineEfficiencyReport
         {
@@ -152,7 +156,7 @@ public class MachineService
             MachineName = machine.Name,
             StartDate = startDate,
             EndDate = endDate,
-            Availability = availability,
+            Availability = (decimal)availability,
             TotalDowntime = totalDowntime,
             DowntimeCount = machineDowntimes.Count(),
             EfficiencyFactor = machine.Efficiencyfactor,
@@ -168,27 +172,27 @@ public class MachineService
         {
             var workcenter = await _workcenterRepository.GetByIdAsync(machine.Workcenterid.Value);
             if (workcenter == null)
-                throw new ValidationException($"Workcenter with ID {machine.Workcenterid} not found");
+                throw new AppException($"Workcenter with ID {machine.Workcenterid} not found", ErrorCodes.NotFound);
         }
 
         // 필수 필드 검증
         if (string.IsNullOrEmpty(machine.Name))
-            throw new ValidationException("Machine name is required");
+            throw new AppException("Machine name is required", ErrorCodes.ValidationError);
 
         if (machine.Nominalcapacity <= 0)
-            throw new ValidationException("Nominal capacity must be greater than 0");
+            throw new AppException("Nominal capacity must be greater than 0", ErrorCodes.ValidationError);
 
         if (machine.Setuptime < 0)
-            throw new ValidationException("Setup time cannot be negative");
+            throw new AppException("Setup time cannot be negative", ErrorCodes.ValidationError);
 
         if (machine.Efficiencyfactor < 0 || machine.Efficiencyfactor > 1)
-            throw new ValidationException("Efficiency factor must be between 0 and 1");
+            throw new AppException("Efficiency factor must be between 0 and 1", ErrorCodes.ValidationError);
 
         if (machine.Maintenancefrequency <= 0)
-            throw new ValidationException("Maintenance frequency must be greater than 0");
+            throw new AppException("Maintenance frequency must be greater than 0", ErrorCodes.ValidationError);
 
         if (machine.Costperhour < 0)
-            throw new ValidationException("Cost per hour cannot be negative");
+            throw new AppException("Cost per hour cannot be negative", ErrorCodes.ValidationError);
     }
 
     // 상태 전환 유효성 검증
@@ -203,7 +207,7 @@ public class MachineService
             ["Offline"] = new[] { "Available" }
         };
 
-        if (!validTransitions.ContainsKey(currentStatus) || 
+        if (!validTransitions.ContainsKey(currentStatus) ||
             !validTransitions[currentStatus].Contains(newStatus))
         {
             throw new InvalidOperationException($"Invalid status transition from {currentStatus} to {newStatus}");
@@ -218,7 +222,7 @@ public class MachineService
             var nextDate = lastDate.AddDays((double)frequencyDays);
             return nextDate.ToString("yyyy-MM-dd");
         }
-        
+
         return DateTime.Now.AddDays((double)frequencyDays).ToString("yyyy-MM-dd");
     }
 }
@@ -235,4 +239,4 @@ public class MachineEfficiencyReport
     public int DowntimeCount { get; set; }
     public decimal EfficiencyFactor { get; set; }
     public decimal CostPerHour { get; set; }
-} 
+}
