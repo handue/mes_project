@@ -20,6 +20,10 @@ public class InventoryService
         _materialConsumptionRepository = materialConsumptionRepository;
     }
 
+    public async Task<IEnumerable<Inventory>> GetAllInventoryAsync()
+    {
+        return await _inventoryRepository.GetAllAsync();
+    }
     // 재고 항목 생성
     public async Task<Inventory> CreateInventoryItemAsync(Inventory inventory)
     {
@@ -31,6 +35,12 @@ public class InventoryService
             inventory.Lastreceiveddate = DateTime.Now.ToString("yyyy-MM-dd");
         
         return await _inventoryRepository.AddAsync(inventory);
+    }
+
+    public async Task UpdateInventoryItemAsync(Inventory inventory){
+        await ValidateInventoryItemAsync(inventory);
+
+        await _inventoryRepository.UpdateAsync(inventory);
     }
 
     // 재고 수량 업데이트

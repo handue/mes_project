@@ -20,6 +20,11 @@ public class EmployeeService
         _workorderRepository = workorderRepository;
     }
 
+    public async Task<IEnumerable<Employee>> GetAllEmployeesAsync()
+    {
+        return await _employeeRepository.GetAllAsync();
+    }
+
     // 직원 생성
     public async Task<Employee> CreateEmployeeAsync(Employee employee)
     {

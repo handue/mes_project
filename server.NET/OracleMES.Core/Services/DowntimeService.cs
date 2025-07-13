@@ -22,6 +22,9 @@ public class DowntimeService
         _employeeRepository = employeeRepository;
         _workorderRepository = workorderRepository;
     }
+    
+  
+
 
     // 다운타임 등록
     public async Task<Downtime> RegisterDowntimeAsync(Downtime downtime)
