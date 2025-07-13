@@ -42,7 +42,7 @@ public class Repository<T>(MesDbContext context) : IRepository<T> where T : clas
         return await _dbSet.ToListAsync();
     }
 
-    public virtual async Task<T?> GetByIdAsync(int id)
+    public virtual async Task<T?> GetByIdAsync(decimal id)
     {
         return await _dbSet.FindAsync(id);
     }
