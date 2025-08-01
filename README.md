@@ -405,24 +405,34 @@ chore: 빌드 프로세스 수정 | Update build process
 - [x] Entity Framework 설정 | Entity Framework configuration
 - [x] Repository 패턴 구현 | Repository pattern implementation
 - [x] DI 컨테이너 설정 | Dependency injection setup
-- [ ] **Controller API 개발 | Controller API Development** 🔄
-  - [ ] WorkorderController (작업지시서 관리) | Work Order Management
-  - [ ] MachineController (설비 관리) | Machine Management
-  - [ ] EmployeeController (직원 관리) | Employee Management
-  - [ ] QualitycontrolController (품질 관리) | Quality Control
-  - [ ] InventoryController (재고 관리) | Inventory Management
-  - [ ] OeemetricController (OEE 분석) | OEE Analysis
-  - [ ] ProductionController (생산 실적) | Production Records
-  - [ ] DashboardController (대시보드) | Dashboard
+- [x] 예외 처리 및 로깅 | Exception handling and logging
+- [x] **Controller API 개발 | Controller API Development** ✅
+  - [x] WorkorderController (작업지시서 관리) | Work Order Management
+  - [x] MachineController (설비 관리) | Machine Management
+  - [x] EmployeeController (직원 관리) | Employee Management
+  - [x] QualitycontrolController (품질 관리) | Quality Control
+  - [x] InventoryController (재고 관리) | Inventory Management
+  - [x] OEEController (OEE 분석) | OEE Analysis
+  - [x] ProductController (제품 관리) | Product Management
 
-### Phase 2: 비즈니스 로직 및 서비스 | Business Logic & Services
-- [ ] 비즈니스 서비스 구현 | Business service implementation
-  - [ ] WorkorderService (작업지시서 비즈니스 로직) | Work Order Business Logic
-  - [ ] OeeCalculationService (OEE 계산 서비스) | OEE Calculation Service
-  - [ ] ProductionTrackingService (생산 추적 서비스) | Production Tracking Service
-- [ ] DTO 및 AutoMapper 설정 | DTO and AutoMapper configuration
-- [ ] 입력 검증 (FluentValidation) | Input validation (FluentValidation)
-- [ ] 예외 처리 및 로깅 | Exception handling and logging
+### Phase 2: 비즈니스 로직 및 서비스 | Business Logic & Services ✅
+- [x] 비즈니스 서비스 구현 | Business service implementation
+  - [x] WorkorderService (작업지시서 비즈니스 로직) | Work Order Business Logic
+  - [x] MachineService (설비 관리 비즈니스 로직) | Machine Management Business Logic
+  - [x] EmployeeService (직원 관리 비즈니스 로직) | Employee Management Business Logic
+  - [x] QualityControlService (품질 관리 비즈니스 로직) | Quality Control Business Logic
+  - [x] InventoryService (재고 관리 비즈니스 로직) | Inventory Management Business Logic
+  - [x] OEEService (OEE 분석 비즈니스 로직) | OEE Analysis Business Logic
+  - [x] ProductService (제품 관리 비즈니스 로직) | Product Management Business Logic
+  - [x] MaterialConsumptionService (자재 소비 비즈니스 로직) | Material Consumption Business Logic
+  - [x] WorkcenterService (작업장 관리 비즈니스 로직) | Workcenter Management Business Logic
+  - [x] DowntimeService (다운타임 관리 비즈니스 로직) | Downtime Management Business Logic
+- [x] DTO 클래스 구현 | DTO classes implementation
+- [x] 예외 처리 및 로깅 | Exception handling and logging
+- [ ] **AutoMapper 설정 및 DTO 변환 로직** 🔄
+  - [ ] AutoMapper 프로필 설정 | AutoMapper profile configuration
+  - [ ] Entity ↔ DTO 변환 로직 | Entity ↔ DTO conversion logic
+  - [ ] 서비스 메서드 DTO 인자 변경 | Service methods DTO parameter changes
 
 ### Phase 3: 인증 및 보안 | Authentication & Security
 - [ ] JWT 인증 구현 | JWT authentication implementation
