@@ -16,7 +16,7 @@ builder.Services.AddSwaggerGen();
 
 // Oracle DB Connection setup
 builder.Services.AddDbContext<MesDbContext>(options =>
-    options.UseOracle(builder.Configuration.GetConnectionString("ConnectionStrings:DefaultConnection")));
+    options.UseOracle(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
 // Repository Dependency Injection
@@ -47,6 +47,8 @@ builder.Services.AddScoped<DowntimeService>();
 builder.Services.AddScoped<WorkcenterService>();
 builder.Services.AddScoped<MaterialConsumptionService>();
 
+
+
 // CORS setup
 builder.Services.AddCors(options =>
 {
@@ -67,21 +69,34 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.Urls.Add("http://localhost:5173");
 
-app.UseHttpsRedirection();
+
+// Configure the HTTP request pipeline.
+// if (app.Environment.IsDevelopment())
+// {
+//     app.UseSwagger();
+//     app.UseSwaggerUI();
+// }
+// else
+// {
+//     app.UseHttpsRedirection();
+// }
+
+
+// 라우팅 미들웨어 순서 수정
+app.UseRouting();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseCors("DevCors");
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 else
 {
     app.UseCors("ProdCors");
+    app.UseHttpsRedirection();
 }
 
 app.UseAuthorization();
