@@ -52,7 +52,7 @@ public class WorkorderService
 
         
         // 상태 변경 유효성 검증
-        ValidateStatusTransition(workorder.Status, newStatus);
+        ValidateStatusTransition(workorder.Status ?? string.Empty, newStatus);
 
         // 상태별 추가 로직
         switch (newStatus)
