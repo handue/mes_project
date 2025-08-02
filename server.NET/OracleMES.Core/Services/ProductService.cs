@@ -266,7 +266,7 @@ public class ProductService
     }
 
     // 제품 유효성 검증
-    private async Task ValidateProductAsync(Product product)
+    private Task ValidateProductAsync(Product product)
     {
         // 필수 필드 검증
         if (string.IsNullOrEmpty(product.Name))
@@ -282,6 +282,8 @@ public class ProductService
         var validCategories = new[] { "Raw Material", "Semi-Finished", "Finished Good", "Spare Part", "Tool" };
         if (!string.IsNullOrEmpty(product.Category) && !validCategories.Contains(product.Category))
             throw new AppException($"Invalid category: {product.Category}. Valid categories are: {string.Join(", ", validCategories)}", ErrorCodes.ValidationError);
+        
+        return Task.CompletedTask;
     }
 
     // BOM 유효성 검증

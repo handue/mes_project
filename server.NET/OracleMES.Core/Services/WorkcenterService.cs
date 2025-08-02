@@ -217,7 +217,7 @@ public class WorkcenterService
     }
 
     // 작업장 유효성 검증
-    private async Task ValidateWorkcenterAsync(Workcenter workcenter)
+    private Task ValidateWorkcenterAsync(Workcenter workcenter)
     {
         // 필수 필드 검증
         if (string.IsNullOrEmpty(workcenter.Name))
@@ -236,6 +236,8 @@ public class WorkcenterService
         var validUOMs = new[] { "PCS/HOUR", "KG/HOUR", "METER/HOUR", "LITER/HOUR" };
         if (!validUOMs.Contains(workcenter.Capacityuom.ToUpper()))
             throw new AppException($"Invalid capacity UOM: {workcenter.Capacityuom}. Valid UOMs are: {string.Join(", ", validUOMs)}", ErrorCodes.ValidationError);
+        
+        return Task.CompletedTask;
     }
 }
 

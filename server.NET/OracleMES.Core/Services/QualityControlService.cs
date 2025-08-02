@@ -53,7 +53,7 @@ public class QualityControlService
     }
 
     // 품질 검사 완료
-    public async Task CompleteQualityCheckAsync(decimal checkId, string result, string comments = null)
+    public async Task CompleteQualityCheckAsync(decimal checkId, string result, string? comments = null)
     {
         var qualityCheck = await _qualityControlRepository.GetByIdAsync(checkId);
         if (qualityCheck == null)
@@ -151,9 +151,9 @@ public class QualityControlService
         var failChecks = qualityChecks.Count(qc => qc.Result?.ToLower() == "fail");
         var partialChecks = qualityChecks.Count(qc => qc.Result?.ToLower() == "partial");
 
-        var averageDefectRate = qualityChecks.Where(qc => qc.Defectrate.HasValue).Average(qc => qc.Defectrate.Value);
-        var averageReworkRate = qualityChecks.Where(qc => qc.Reworkrate.HasValue).Average(qc => qc.Reworkrate.Value);
-        var averageYieldRate = qualityChecks.Where(qc => qc.Yieldrate.HasValue).Average(qc => qc.Yieldrate.Value);
+        var averageDefectRate = qualityChecks.Where(qc => qc.Defectrate.HasValue).Average(qc => qc.Defectrate!.Value);
+        var averageReworkRate = qualityChecks.Where(qc => qc.Reworkrate.HasValue).Average(qc => qc.Reworkrate!.Value);
+        var averageYieldRate = qualityChecks.Where(qc => qc.Yieldrate.HasValue).Average(qc => qc.Yieldrate!.Value);
 
         return new QualityStatistics
         {
@@ -187,7 +187,7 @@ public class QualityControlService
             var dailyChecks = group.ToList();
             var totalChecks = dailyChecks.Count;
             var passChecks = dailyChecks.Count(qc => qc.Result?.ToLower() == "pass");
-            var averageYield = dailyChecks.Where(qc => qc.Yieldrate.HasValue).Average(qc => qc.Yieldrate.Value);
+            var averageYield = dailyChecks.Where(qc => qc.Yieldrate.HasValue).Average(qc => qc.Yieldrate!.Value);
 
             trendData.Add(new QualityTrendPoint
             {

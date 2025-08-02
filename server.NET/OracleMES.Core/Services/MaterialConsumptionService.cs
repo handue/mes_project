@@ -100,9 +100,9 @@ public class MaterialConsumptionService
 
         var totalPlannedQuantity = consumptions.Sum(c => c.Plannedquantity);
         
-        var totalActualQuantity = consumptions.Where(c => c.Actualquantity.HasValue).Sum(c => c.Actualquantity.Value);
+        var totalActualQuantity = consumptions.Where(c => c.Actualquantity.HasValue).Sum(c => c.Actualquantity!.Value);
         var totalVariance = totalActualQuantity - totalPlannedQuantity;
-        var averageVariancePercent = consumptions.Where(c => c.Variancepercent.HasValue).Average(c => c.Variancepercent.Value);
+        var averageVariancePercent = consumptions.Where(c => c.Variancepercent.HasValue).Average(c => c.Variancepercent!.Value);
 
         // 자재별 분석
         var materialAnalysis = new List<MaterialConsumptionAnalysis>();
@@ -114,7 +114,7 @@ public class MaterialConsumptionService
             var materialConsumptions = group.ToList();
             
             var plannedQty = materialConsumptions.Sum(c => c.Plannedquantity);
-            var actualQty = materialConsumptions.Where(c => c.Actualquantity.HasValue).Sum(c => c.Actualquantity.Value);
+            var actualQty = materialConsumptions.Where(c => c.Actualquantity.HasValue).Sum(c => c.Actualquantity!.Value);
             var variance = actualQty - plannedQty;
             var variancePercent = plannedQty > 0 ? (variance / plannedQty) * 100 : 0;
 
@@ -142,7 +142,7 @@ public class MaterialConsumptionService
             var workorderConsumptions = group.ToList();
             
             var plannedQty = workorderConsumptions.Sum(c => c.Plannedquantity);
-            var actualQty = workorderConsumptions.Where(c => c.Actualquantity.HasValue).Sum(c => c.Actualquantity.Value);
+            var actualQty = workorderConsumptions.Where(c => c.Actualquantity.HasValue).Sum(c => c.Actualquantity!.Value);
             var variance = actualQty - plannedQty;
             var variancePercent = plannedQty > 0 ? (variance / plannedQty) * 100 : 0;
 
@@ -193,7 +193,7 @@ public class MaterialConsumptionService
         {
             var dailyConsumptions = group.ToList();
             var plannedQty = dailyConsumptions.Sum(c => c.Plannedquantity);
-            var actualQty = dailyConsumptions.Where(c => c.Actualquantity.HasValue).Sum(c => c.Actualquantity.Value);
+            var actualQty = dailyConsumptions.Where(c => c.Actualquantity.HasValue).Sum(c => c.Actualquantity!.Value);
             var variance = actualQty - plannedQty;
             var variancePercent = plannedQty > 0 ? (variance / plannedQty) * 100 : 0;
 
@@ -234,12 +234,12 @@ public class MaterialConsumptionService
             var material = await _inventoryRepository.GetByIdAsync(consumption.Itemid);
             if (material != null)
             {
-                var cost = consumption.Actualquantity.Value * material.Cost;
+                var cost = consumption.Actualquantity!.Value * material.Cost;
                 costAnalysis.Add(new MaterialCostInfo
                 {
                     MaterialId = consumption.Itemid,
                     MaterialName = material.Name,
-                    Quantity = consumption.Actualquantity.Value,
+                    Quantity = consumption.Actualquantity!.Value,
                     UnitCost = material.Cost,
                     TotalCost = cost
                 });

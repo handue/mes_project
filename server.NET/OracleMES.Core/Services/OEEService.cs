@@ -130,12 +130,12 @@ public class OEEService
     }
 
     // 품질 계산
-    public async Task<decimal> CalculateQualityAsync(decimal machineId, DateTime date)
+    public Task<decimal> CalculateQualityAsync(decimal machineId, DateTime date)
     {
         // 이 메서드는 품질 검사 데이터를 기반으로 계산
         // 실제 구현에서는 품질 검사 결과를 조회하여 계산
         // 여기서는 기본값 95% 반환
-        return 95.0m;
+        return Task.FromResult(95.0m);
     }
 
     // OEE 계산 (가용성 × 성능 × 품질)
