@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using OracleMES.Core.DTOs;
 using OracleMES.Core.Services;
 using OracleMES.Core.Entities;
+using Microsoft.Extensions.Logging;
 
 namespace OracleMES.API.Controllers
 {
@@ -10,16 +11,19 @@ namespace OracleMES.API.Controllers
     public class MachineController : ControllerBase
     {
         private readonly MachineService _machineService;
+        private readonly ILogger<MachineController> _logger;
 
-        public MachineController(MachineService machineService)
+        public MachineController(MachineService machineService, ILogger<MachineController> logger)
         {
             _machineService = machineService;
+            _logger = logger;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MachineResponseDTO>>> GetAllMachines()
         {
-            Console.WriteLine("GetAllMachines 호출");
+            _logger.LogInformation("=== GetAllMachines Called === ");
+
             var machines = await _machineService.GetActiveMachinesAsync();
             var response = machines.Select(m => new MachineResponseDTO
             {
