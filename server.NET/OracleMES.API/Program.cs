@@ -10,7 +10,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddApplicationPart(typeof(Program).Assembly)
+    .AddControllersAsServices();
+
+// 로깅 레벨 설정
+builder.Logging.SetMinimumLevel(LogLevel.Debug);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -53,56 +58,57 @@ builder.Services.AddScoped<MaterialConsumptionService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("DevCors", policy =>
-          policy.WithOrigins("http://localhost:5173")
+          policy.AllowAnyOrigin()
               .AllowAnyMethod()
               .AllowAnyHeader()
-              .AllowCredentials()
-    );
-
-    options.AddPolicy("ProdCors", policy =>
-        policy.WithOrigins("https://my-production-app.com")
-            .AllowAnyMethod()
-            .AllowAnyHeader()
-            .AllowCredentials()
     );
 });
 
 var app = builder.Build();
 
-app.Urls.Add("http://localhost:5173");
+// 서버 시작 로그
+Console.WriteLine("=== MES API Server Started ===");
+Console.WriteLine($"Environment: {app.Environment.EnvironmentName}");
+Console.WriteLine($"Start Time: {DateTime.Now}");
 
+// DB 연결 테스트
+try
+{
+    using var scope = app.Services.CreateScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<MesDbContext>();
+    var canConnect = await dbContext.Database.CanConnectAsync();
+    Console.WriteLine($"DB Connection: {(canConnect ? "✅ Success" : "❌ Failed")}");
+    
+    // 설비 개수 확인
+    var machineCount = await dbContext.Machines.CountAsync();
+    Console.WriteLine($"Machine Count: {machineCount}");
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"❌ DB Connection Failed: {ex.Message}");
+}
 
 // Configure the HTTP request pipeline.
-// if (app.Environment.IsDevelopment())
-// {
-//     app.UseSwagger();
-//     app.UseSwaggerUI();
-// }
-// else
-// {
-//     app.UseHttpsRedirection();
-// }
-
-
-// 라우팅 미들웨어 순서 수정
-app.UseRouting();
-
 if (app.Environment.IsDevelopment())
 {
-    app.UseCors("DevCors");
+    Console.WriteLine("Development Mode");
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseCors("DevCors");
 }
 else
 {
-    app.UseCors("ProdCors");
+    Console.WriteLine("Production Mode");
     app.UseHttpsRedirection();
+    app.UseCors("DevCors"); // temporary setting for development
 }
 
+app.UseRouting();
 app.UseAuthorization();
-
 app.UseMiddleware<GlobalExceptionMiddleware>();
-
 app.MapControllers();
+
+Console.WriteLine("=== Controller Mapping Complete ===");
+Console.WriteLine("Server is running...");
 
 app.Run();
