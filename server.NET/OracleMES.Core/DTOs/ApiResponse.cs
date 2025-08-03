@@ -2,7 +2,7 @@
 using System.Text.Json.Serialization;
 using OracleMES.Core.DTOs;
 
-namespace OracleMES.COre.DTOs;
+namespace OracleMES.Core.DTOs;
 
 public class ApiResponse<T>
 {
