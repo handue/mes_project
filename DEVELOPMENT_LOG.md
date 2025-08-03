@@ -152,16 +152,62 @@ This document is a sequential log of the Oracle MES project development progress
   - Oracle 데이터베이스 연결 상태 확인 도구 | Oracle database connection status check tool
   - 개발 환경 설정 검증 스크립트 | Development environment configuration validation script
 
+#### 8단계: 라우팅 및 미들웨어 문제 해결 | Phase 8: Routing and Middleware Issue Resolution
+
+##### ✅ 8.1 GlobalExceptionMiddleware 오류 수정 | GlobalExceptionMiddleware Error Fix
+- **완료일**: 2025-08-03
+- **작업 내용**:
+  - 잘못된 namespace 참조 수정 (OracleMES.COre.DTOs → OracleMES.Core.DTOs) | Fix incorrect namespace reference (OracleMES.COre.DTOs → OracleMES.Core.DTOs)
+  - Request Body 읽기 로직 주석 처리로 미들웨어 성능 개선 | Improve middleware performance by commenting out Request Body reading logic
+  - API 요청 처리 오류 해결 | Resolve API request processing errors
+  - 미들웨어에서 발생하던 라우팅 차단 문제 해결 | Fix routing blocking issues in middleware
+
+##### ✅ 8.2 Program.cs 라우팅 설정 최적화 | Program.cs Routing Configuration Optimization
+- **완료일**: 2025-08-03
+- **작업 내용**:
+  - 컨트롤러 등록 개선 (AddApplicationPart, AddControllersAsServices) | Improve controller registration (AddApplicationPart, AddControllersAsServices)
+  - 로깅 레벨을 Debug로 설정하여 디버깅 강화 | Set logging level to Debug for enhanced debugging
+  - CORS 정책 단순화 (AllowAnyOrigin으로 개발 환경 최적화) | Simplify CORS policy (optimize development environment with AllowAnyOrigin)
+  - 데이터베이스 연결 상태 확인 로직 추가 | Add database connection status check logic
+  - 서버 시작 시 상태 정보 출력 기능 추가 | Add server startup status information output
+
+##### ✅ 8.3 컨트롤러 로깅 시스템 개선 | Controller Logging System Improvement  
+- **완료일**: 2025-08-03
+- **작업 내용**:
+  - MachineController에 ILogger 의존성 주입 | Add ILogger dependency injection to MachineController
+  - Console.WriteLine을 구조화된 로깅으로 교체 | Replace Console.WriteLine with structured logging
+  - API 호출 추적을 위한 로그 메시지 개선 | Improve log messages for API call tracking
+  - 디버깅 및 모니터링 강화 | Enhance debugging and monitoring
+
+##### ✅ 8.4 네임스페이스 오타 수정 | Namespace Typo Fix
+- **완료일**: 2025-08-03  
+- **작업 내용**:
+  - ApiResponse.cs의 namespace 오타 수정 | Fix namespace typo in ApiResponse.cs
+  - 프로젝트 참조 오류 해결 | Resolve project reference errors
+  - 코드 일관성 개선 | Improve code consistency
+
 ---
 
 ## 🔄 현재 진행 중인 작업 | Current Work in Progress
 
-### Phase 2.3: AutoMapper 설정 및 DTO 변환 로직 | AutoMapper Setup and DTO Conversion Logic
+### Phase 8.5: API-DB 데이터 연동 구현 | API-DB Data Integration Implementation
+
+#### 📋 현재 작업 내용 | Current Work Content
+- **시작일**: 2025-08-03
+- **예상 완료일**: 2025-08-10 (약 1주일) | Expected completion: 2025-08-10 (about 1 week)
+- **작업 목표**: API 요청 시 데이터베이스에서 실제 데이터가 정상적으로 조회되도록 구현 | Implement proper data retrieval from database when API requests are made
+- **주요 작업**:
+  - Oracle 데이터베이스 연결 안정성 확인 | Verify Oracle database connection stability
+  - API 엔드포인트에서 실제 데이터 조회 테스트 | Test actual data retrieval from API endpoints  
+  - 데이터 매핑 및 변환 로직 검증 | Verify data mapping and conversion logic
+  - 성능 최적화 및 오류 처리 개선 | Performance optimization and error handling improvement
+
+### Phase 2.3: AutoMapper 설정 및 DTO 변환 로직 | AutoMapper Setup and DTO Conversion Logic (예정)
 
 #### 📋 다음 단계 계획 | Next Steps Plan
 
 ##### 2.3.1 AutoMapper 프로필 설정 | AutoMapper Profile Configuration
-- **예정일**: 2025-07-13
+- **예정일**: 2025-08-11 ~ 2025-08-18 (약 1주일) | Expected: 2025-08-11 ~ 2025-08-18 (about 1 week)
 - **계획 내용**:
   - AutoMapper NuGet 패키지 설치 | AutoMapper NuGet package installation
   - Entity ↔ DTO 변환을 위한 프로필 클래스 생성 | Create profile classes for Entity ↔ DTO conversion
@@ -169,14 +215,14 @@ This document is a sequential log of the Oracle MES project development progress
   - 복잡한 객체 매핑 규칙 정의 | Define complex object mapping rules
 
 ##### 2.3.2 서비스 메서드 DTO 인자 변경 | Service Methods DTO Parameter Changes
-- **예정일**: 2025-07-13
+- **예정일**: 2025-08-19 ~ 2025-08-25 (약 1주일) | Expected: 2025-08-19 ~ 2025-08-25 (about 1 week)
 - **계획 내용**:
   - 모든 서비스 메서드의 매개변수를 Entity → DTO로 변경 | Change all service method parameters from Entity → DTO
   - AutoMapper를 사용한 Entity ↔ DTO 변환 로직 적용 | Apply Entity ↔ DTO conversion logic using AutoMapper
   - 컨트롤러에서 DTO를 받아 서비스로 전달하는 구조로 변경 | Change structure to pass DTOs from controllers to services
 
 ##### 2.3.3 입력 검증 강화 | Input Validation Enhancement
-- **예정일**: 2025-07-14
+- **예정일**: 2025-08-26 ~ 2025-09-01 (약 1주일) | Expected: 2025-08-26 ~ 2025-09-01 (about 1 week)
 - **계획 내용**:
   - FluentValidation 라이브러리 도입 | Introduce FluentValidation library
   - DTO 클래스별 검증 규칙 정의 | Define validation rules for each DTO class
@@ -187,10 +233,10 @@ This document is a sequential log of the Oracle MES project development progress
 ## 📊 개발 완료 통계 | Development Completion Statistics
 
 ### ✅ 완료된 작업 | Completed Tasks
-- **총 커밋 수**: 37개 | Total commits: 37
+- **총 커밋 수**: 42개 | Total commits: 42
 - **구현된 파일 수**: 55+ 개 | Implemented files: 55+
-- **총 코드 라인 수**: 10,500+ 줄 | Total code lines: 10,500+
-- **완료된 기능 영역**: 7개 주요 영역 | Completed functional areas: 7 major areas
+- **총 코드 라인 수**: 11,000+ 줄 | Total code lines: 11,000+
+- **완료된 기능 영역**: 8개 주요 영역 | Completed functional areas: 8 major areas
 
 ### 🎯 주요 성과 | Key Achievements
 1. **완전한 백엔드 API 구현**: 7개 컨트롤러, 10개 서비스 | Complete backend API implementation: 7 controllers, 10 services
@@ -198,6 +244,7 @@ This document is a sequential log of the Oracle MES project development progress
 3. **Repository 패턴 완성**: 모든 데이터 액세스 계층 구현 | Repository pattern completion: all data access layer implementation
 4. **DTO 구조 설계**: API 데이터 전송 객체 체계 구축 | DTO structure design: API data transfer object system construction
 5. **의존성 주입 완성**: 완전한 DI 컨테이너 설정 | Dependency injection completion: complete DI container setup
+6. **라우팅 및 미들웨어 문제 해결**: API 요청 처리 정상화 | Routing and middleware issue resolution: API request processing normalization
 
 ### 📈 현재 진행률 | Current Progress Rate
 - **Phase 1 (백엔드 API)**: 100% 완료 ✅ | Phase 1 (Backend API): 100% complete ✅
@@ -220,7 +267,8 @@ This document is a sequential log of the Oracle MES project development progress
 
 ### Phase 3: 인증 및 보안 | Authentication and Security
 - **목표**: JWT 기반 인증 시스템 구축 | Goal: Build JWT-based authentication system
-- **기간**: 예상 3-5일 | Duration: Expected 3-5 days
+- **기간**: 예상 3-4주 | Duration: Expected 3-4 weeks
+- **예상 시작일**: 2025-09-02 | Expected start date: 2025-09-02
 - **주요 작업**:
   1. JWT 토큰 인증 구현 | JWT token authentication implementation
   2. 사용자 관리 API 개발 | User management API development
@@ -247,6 +295,11 @@ This document is a sequential log of the Oracle MES project development progress
 2. **성능 최적화**: 비동기 처리 및 효율적인 쿼리 설계 | Performance optimization: asynchronous processing and efficient query design
 3. **유지보수성**: 모듈화된 구조로 유지보수 용이성 향상 | Maintainability: improved maintainability through modular structure
 4. **확장성**: 새로운 기능 추가가 용이한 구조 설계 | Scalability: structure design for easy addition of new features
+
+### ⏰ 개발 일정 조정 | Development Schedule Adjustment
+- **예상 기간 재조정**: 기존 일 단위 → 주 단위로 현실적 조정 | Schedule readjustment: Realistic adjustment from day-based to week-based
+- **집중 개발 전략**: 핵심 기능 우선 개발 | Focused development strategy: Priority development of core features
+- **단계별 완성도**: 각 단계별로 완전한 기능 구현 후 다음 단계 진행 | Step-by-step completion: Complete implementation of each phase before proceeding to the next
 
 ---
 
