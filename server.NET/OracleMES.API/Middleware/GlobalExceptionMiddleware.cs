@@ -3,7 +3,7 @@
 using System.Net;
 using OracleMES.Core.DTOs;
 using OracleMES.Core.Exceptions;
-using OracleMES.COre.DTOs;
+
 
 namespace OracleMES.API.Middleware;
 
@@ -23,26 +23,22 @@ public class GlobalExceptionMiddleware(
     {
         try
         {
-            if (context.Request.ContentLength > 0)
-            {
-                context.Request.EnableBuffering();
-
-                var buffer = new byte[context.Request.ContentLength.Value];
-
-                await context.Request.Body.ReadAsync(buffer, 0, buffer.Length);
-
-                var bodyText = System.Text.Encoding.UTF8.GetString(buffer);
-
-                context.Request.Body.Position = 0;
-
-
-            }
+            // Request Body 읽기 - 로그 처리시에만 필요한 경우 사용 (only use for logging)
+            // if (context.Request.ContentLength > 0)
+            // {
+            //     context.Request.EnableBuffering();
+            //     var buffer = new byte[context.Request.ContentLength.Value];
+            //     await context.Request.Body.ReadAsync(buffer, 0, buffer.Length);
+            //     var bodyText = System.Text.Encoding.UTF8.GetString(buffer);
+            //     context.Request.Body.Position = 0;
+            //     // 필요시 bodyText를 로깅에 사용
+            // }
+                        await _next(context);
         }
         catch (Exception ex)
         {
             await HandleExceptionAsync(context, ex);
         }
-
     }
 
     private async Task HandleExceptionAsync(HttpContext context, Exception exception)
