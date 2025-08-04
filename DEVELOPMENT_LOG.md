@@ -186,6 +186,35 @@ This document is a sequential log of the Oracle MES project development progress
   - 프로젝트 참조 오류 해결 | Resolve project reference errors
   - 코드 일관성 개선 | Improve code consistency
 
+##### ✅ 8.5 Entity Framework 키 설정 및 DB 매핑 수정 | Entity Framework Key Configuration and DB Mapping Fix
+- **완료일**: 2025-08-04
+- **작업 내용**:
+  - Machine Entity HasNoKey 문제 해결 | Resolve Machine Entity HasNoKey issue
+  - MesDbContext에서 Machine 엔티티에 Primary Key(Machineid) 설정 | Set Primary Key(Machineid) for Machine entity in MesDbContext
+  - 수정/삭제 API 작동을 위한 키 매핑 구조 개선 | Improve key mapping structure for update/delete API operations
+  - 데이터베이스 테이블명과 엔티티 매핑 정확성 향상 | Improve accuracy of database table name and entity mapping
+
+##### ✅ 8.6 MachineRepository 상태 값 정규화 | MachineRepository Status Value Normalization
+- **완료일**: 2025-08-04
+- **작업 내용**:
+  - Machine 상태 값을 소문자로 통일 (RUNNING → running, IDLE → idle) | Normalize Machine status values to lowercase (RUNNING → running, IDLE → idle)
+  - 데이터베이스 실제 데이터와 코드 간 일치성 확보 | Ensure consistency between actual database data and code
+  - Active/Available 설비 조회 로직 개선 | Improve Active/Available machine query logic
+
+##### ✅ 8.7 API 로깅 및 디버깅 강화 | API Logging and Debugging Enhancement
+- **완료일**: 2025-08-04
+- **작업 내용**:
+  - MachineController에 조회된 설비 개수 로깅 추가 | Add retrieved machine count logging to MachineController
+  - API 응답 데이터 검증을 위한 디버깅 정보 확장 | Expand debugging information for API response data validation
+  - 실시간 데이터 조회 상태 모니터링 강화 | Enhance real-time data retrieval status monitoring
+
+##### ✅ 8.8 Oracle SQL 스크립트 개선 | Oracle SQL Script Improvement
+- **완료일**: 2025-08-04
+- **작업 내용**:
+  - check-oracle.sql 스크립트에서 테이블명 정확성 개선 | Improve table name accuracy in check-oracle.sql script
+  - WORKORDER → WORKORDERS, MACHINE → MACHINES로 테이블명 수정 | Correct table names from WORKORDER → WORKORDERS, MACHINE → MACHINES
+  - 데이터베이스 검증 스크립트 정확성 향상 | Improve database verification script accuracy
+
 ---
 
 ## 🔄 현재 진행 중인 작업 | Current Work in Progress
@@ -233,9 +262,9 @@ This document is a sequential log of the Oracle MES project development progress
 ## 📊 개발 완료 통계 | Development Completion Statistics
 
 ### ✅ 완료된 작업 | Completed Tasks
-- **총 커밋 수**: 42개 | Total commits: 42
+- **총 커밋 수**: 47개 | Total commits: 47
 - **구현된 파일 수**: 55+ 개 | Implemented files: 55+
-- **총 코드 라인 수**: 11,000+ 줄 | Total code lines: 11,000+
+- **총 코드 라인 수**: 11,200+ 줄 | Total code lines: 11,200+
 - **완료된 기능 영역**: 8개 주요 영역 | Completed functional areas: 8 major areas
 
 ### 🎯 주요 성과 | Key Achievements
@@ -245,6 +274,7 @@ This document is a sequential log of the Oracle MES project development progress
 4. **DTO 구조 설계**: API 데이터 전송 객체 체계 구축 | DTO structure design: API data transfer object system construction
 5. **의존성 주입 완성**: 완전한 DI 컨테이너 설정 | Dependency injection completion: complete DI container setup
 6. **라우팅 및 미들웨어 문제 해결**: API 요청 처리 정상화 | Routing and middleware issue resolution: API request processing normalization
+7. **Entity Framework 키 매핑 해결**: HasNoKey 문제 해결로 CRUD 작업 정상화 | Entity Framework key mapping resolution: CRUD operations normalization by resolving HasNoKey issue
 
 ### 📈 현재 진행률 | Current Progress Rate
 - **Phase 1 (백엔드 API)**: 100% 완료 ✅ | Phase 1 (Backend API): 100% complete ✅
