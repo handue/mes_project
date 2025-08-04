@@ -222,9 +222,10 @@ public partial class MesDbContext : DbContext
 
         modelBuilder.Entity<Machine>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("MACHINES");
+            entity.HasKey(e => e.Machineid);
+            entity.ToTable("MACHINES");
+
+            // entity.HasNoKey().ToTable("MACHINES");
 
             entity.Property(e => e.Capacityuom)
                 .HasColumnType("CLOB")
@@ -271,7 +272,9 @@ public partial class MesDbContext : DbContext
             entity.Property(e => e.Status)
                 .HasColumnType("CLOB")
                 .HasColumnName("STATUS");
-            entity.Property(e => e.Type).HasColumnType("CLOB");
+            entity.Property(e => e.Type)
+                .HasColumnType("CLOB")
+                .HasColumnName("Type");
             entity.Property(e => e.Workcenterid)
                 .HasColumnType("NUMBER(38)")
                 .HasColumnName("WORKCENTERID");
