@@ -25,6 +25,7 @@ namespace OracleMES.API.Controllers
             _logger.LogInformation("=== GetAllMachines Called === ");
 
             var machines = await _machineService.GetActiveMachinesAsync();
+            _logger.LogInformation($"Machine Count: {machines.Count()}");
             var response = machines.Select(m => new MachineResponseDTO
             {
                 MachineId = m.Machineid.ToString(),
