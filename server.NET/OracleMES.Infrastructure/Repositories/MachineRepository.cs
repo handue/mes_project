@@ -28,14 +28,14 @@ public class MachineRepository : Repository<Machine>, IMachineRepository
     public async Task<IEnumerable<Machine>> GetActiveMachinesAsync()
     {
         return await _dbSet
-            .Where(m => m.Status == "RUNNING" || m.Status == "IDLE")
+            .Where(m => m.Status == "running" || m.Status == "idle")
             .ToListAsync();
     }
 
     public async Task<IEnumerable<Machine>> GetAvailableMachinesAsync()
     {
         return await _dbSet
-            .Where(m => m.Status == "IDLE")
+            .Where(m => m.Status == "idle")
             .ToListAsync();
     }
 
