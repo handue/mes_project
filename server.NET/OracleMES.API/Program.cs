@@ -5,6 +5,8 @@ using OracleMES.Core.Interfaces.Repositories;
 using OracleMES.Core.Services;
 using OracleMES.Infrastructure.Data;
 using OracleMES.Infrastructure.Repositories;
+using OracleMES.Core.Mappings;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,6 +54,9 @@ builder.Services.AddScoped<DowntimeService>();
 builder.Services.AddScoped<WorkcenterService>();
 builder.Services.AddScoped<MaterialConsumptionService>();
 
+// AutoMapper Configuration
+builder.Services.AddAutoMapper(cfg => {
+}, typeof(MachineProfile), typeof(WorkorderProfile), typeof(InventoryProfile));
 
 
 // CORS setup
