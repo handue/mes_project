@@ -3,6 +3,7 @@ using OracleMES.Core.DTOs;
 using OracleMES.Core.Services;
 using OracleMES.Core.Entities;
 using Microsoft.Extensions.Logging;
+using AutoMapper;
 
 namespace OracleMES.API.Controllers
 {
@@ -12,11 +13,13 @@ namespace OracleMES.API.Controllers
     {
         private readonly MachineService _machineService;
         private readonly ILogger<MachineController> _logger;
+        private readonly IMapper _mapper;
 
-        public MachineController(MachineService machineService, ILogger<MachineController> logger)
+        public MachineController(MachineService machineService, ILogger<MachineController> logger, IMapper mapper)
         {
             _machineService = machineService;
             _logger = logger;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -26,25 +29,7 @@ namespace OracleMES.API.Controllers
 
             var machines = await _machineService.GetActiveMachinesAsync();
             _logger.LogInformation($"Machine Count: {machines.Count()}");
-            var response = machines.Select(m => new MachineResponseDTO
-            {
-                MachineId = m.Machineid.ToString(),
-                Name = m.Name,
-                Type = m.Type,
-                WorkcenterId = m.Workcenterid?.ToString(),
-                Status = m.Status,
-                NominalCapacity = m.Nominalcapacity,
-                CapacityUOM = m.Capacityuom,
-                SetupTime = m.Setuptime,
-                EfficiencyFactor = m.Efficiencyfactor,
-                MaintenanceFrequency = m.Maintenancefrequency,
-                LastMaintenanceDate = m.Lastmaintenancedate,
-                NextMaintenanceDate = m.Nextmaintenancedate,
-                ProductChangeoverTime = m.Productchangeovertime,
-                CostPerHour = m.Costperhour,
-                InstallationDate = m.Installationdate,
-                ModelNumber = m.Modelnumber
-            });
+            var response = _mapper.Map<IEnumerable<MachineResponseDTO>>(machines);
 
             return Ok(response);
 
@@ -64,25 +49,7 @@ namespace OracleMES.API.Controllers
             if (machine == null)
                 return NotFound(new { message = "설비를 찾을 수 없습니다." });
 
-            var response = new MachineResponseDTO
-            {
-                MachineId = machine.Machineid.ToString(),
-                Name = machine.Name,
-                Type = machine.Type,
-                WorkcenterId = machine.Workcenterid?.ToString(),
-                Status = machine.Status,
-                NominalCapacity = machine.Nominalcapacity,
-                CapacityUOM = machine.Capacityuom,
-                SetupTime = machine.Setuptime,
-                EfficiencyFactor = machine.Efficiencyfactor,
-                MaintenanceFrequency = machine.Maintenancefrequency,
-                LastMaintenanceDate = machine.Lastmaintenancedate,
-                NextMaintenanceDate = machine.Nextmaintenancedate,
-                ProductChangeoverTime = machine.Productchangeovertime,
-                CostPerHour = machine.Costperhour,
-                InstallationDate = machine.Installationdate,
-                ModelNumber = machine.Modelnumber
-            };
+            var response = _mapper.Map<MachineResponseDTO>(machine);
             return Ok(response);
 
         }
@@ -91,45 +58,9 @@ namespace OracleMES.API.Controllers
         public async Task<ActionResult<MachineResponseDTO>> CreateMachine(CreateMachineDTO createDto)
         {
 
-            var machine = new Machine
-            {
-                Machineid = decimal.Parse(createDto.MachineId),
-                Name = createDto.Name,
-                Type = createDto.Type,
-                Workcenterid = !string.IsNullOrEmpty(createDto.WorkcenterId) ? decimal.Parse(createDto.WorkcenterId) : null,
-                Status = createDto.Status ?? "Available",
-                Nominalcapacity = createDto.NominalCapacity,
-                Capacityuom = createDto.CapacityUOM,
-                Setuptime = createDto.SetupTime,
-                Efficiencyfactor = createDto.EfficiencyFactor,
-                Maintenancefrequency = createDto.MaintenanceFrequency,
-                Productchangeovertime = createDto.ProductChangeoverTime,
-                Costperhour = createDto.CostPerHour,
-                Installationdate = createDto.InstallationDate,
-                Modelnumber = createDto.ModelNumber
-            };
-
+            var machine = _mapper.Map<Machine>(createDto);
             var createdMachine = await _machineService.CreateMachineAsync(machine);
-
-            var response = new MachineResponseDTO
-            {
-                MachineId = createdMachine.Machineid.ToString(),
-                Name = createdMachine.Name,
-                Type = createdMachine.Type,
-                WorkcenterId = createdMachine.Workcenterid?.ToString(),
-                Status = createdMachine.Status,
-                NominalCapacity = createdMachine.Nominalcapacity,
-                CapacityUOM = createdMachine.Capacityuom,
-                SetupTime = createdMachine.Setuptime,
-                EfficiencyFactor = createdMachine.Efficiencyfactor,
-                MaintenanceFrequency = createdMachine.Maintenancefrequency,
-                LastMaintenanceDate = createdMachine.Lastmaintenancedate,
-                NextMaintenanceDate = createdMachine.Nextmaintenancedate,
-                ProductChangeoverTime = createdMachine.Productchangeovertime,
-                CostPerHour = createdMachine.Costperhour,
-                InstallationDate = createdMachine.Installationdate,
-                ModelNumber = createdMachine.Modelnumber
-            };
+            var response = _mapper.Map<MachineResponseDTO>(createdMachine);
             return CreatedAtAction(nameof(GetMachine), new { id = createdMachine.Machineid }, response);
 
 
@@ -165,25 +96,7 @@ namespace OracleMES.API.Controllers
         {
 
             var machines = await _machineService.GetAvailableMachinesAsync();
-            var response = machines.Select(m => new MachineResponseDTO
-            {
-                MachineId = m.Machineid.ToString(),
-                Name = m.Name,
-                Type = m.Type,
-                WorkcenterId = m.Workcenterid?.ToString(),
-                Status = m.Status,
-                NominalCapacity = m.Nominalcapacity,
-                CapacityUOM = m.Capacityuom,
-                SetupTime = m.Setuptime,
-                EfficiencyFactor = m.Efficiencyfactor,
-                MaintenanceFrequency = m.Maintenancefrequency,
-                LastMaintenanceDate = m.Lastmaintenancedate,
-                NextMaintenanceDate = m.Nextmaintenancedate,
-                ProductChangeoverTime = m.Productchangeovertime,
-                CostPerHour = m.Costperhour,
-                InstallationDate = m.Installationdate,
-                ModelNumber = m.Modelnumber
-            });
+            var response = _mapper.Map<IEnumerable<MachineResponseDTO>>(machines);
             return Ok(response);
 
 
@@ -194,25 +107,7 @@ namespace OracleMES.API.Controllers
         {
 
             var machines = await _machineService.GetMaintenanceDueMachinesAsync();
-            var response = machines.Select(m => new MachineResponseDTO
-            {
-                MachineId = m.Machineid.ToString(),
-                Name = m.Name,
-                Type = m.Type,
-                WorkcenterId = m.Workcenterid?.ToString(),
-                Status = m.Status,
-                NominalCapacity = m.Nominalcapacity,
-                CapacityUOM = m.Capacityuom,
-                SetupTime = m.Setuptime,
-                EfficiencyFactor = m.Efficiencyfactor,
-                MaintenanceFrequency = m.Maintenancefrequency,
-                LastMaintenanceDate = m.Lastmaintenancedate,
-                NextMaintenanceDate = m.Nextmaintenancedate,
-                ProductChangeoverTime = m.Productchangeovertime,
-                CostPerHour = m.Costperhour,
-                InstallationDate = m.Installationdate,
-                ModelNumber = m.Modelnumber
-            });
+            var response = _mapper.Map<IEnumerable<MachineResponseDTO>>(machines);
             return Ok(response);
 
         }
@@ -222,25 +117,7 @@ namespace OracleMES.API.Controllers
         {
 
             var machines = await _machineService.GetMachinesByStatusAsync(status);
-            var response = machines.Select(m => new MachineResponseDTO
-            {
-                MachineId = m.Machineid.ToString(),
-                Name = m.Name,
-                Type = m.Type,
-                WorkcenterId = m.Workcenterid?.ToString(),
-                Status = m.Status,
-                NominalCapacity = m.Nominalcapacity,
-                CapacityUOM = m.Capacityuom,
-                SetupTime = m.Setuptime,
-                EfficiencyFactor = m.Efficiencyfactor,
-                MaintenanceFrequency = m.Maintenancefrequency,
-                LastMaintenanceDate = m.Lastmaintenancedate,
-                NextMaintenanceDate = m.Nextmaintenancedate,
-                ProductChangeoverTime = m.Productchangeovertime,
-                CostPerHour = m.Costperhour,
-                InstallationDate = m.Installationdate,
-                ModelNumber = m.Modelnumber
-            });
+            var response = _mapper.Map<IEnumerable<MachineResponseDTO>>(machines);
             return Ok(response);
 
 
@@ -254,25 +131,7 @@ namespace OracleMES.API.Controllers
                 return BadRequest(new { message = "올바른 작업장 ID를 입력해주세요." });
 
             var machines = await _machineService.GetMachinesByWorkcenterAsync(workcenterIdDecimal);
-            var response = machines.Select(m => new MachineResponseDTO
-            {
-                MachineId = m.Machineid.ToString(),
-                Name = m.Name,
-                Type = m.Type,
-                WorkcenterId = m.Workcenterid?.ToString(),
-                Status = m.Status,
-                NominalCapacity = m.Nominalcapacity,
-                CapacityUOM = m.Capacityuom,
-                SetupTime = m.Setuptime,
-                EfficiencyFactor = m.Efficiencyfactor,
-                MaintenanceFrequency = m.Maintenancefrequency,
-                LastMaintenanceDate = m.Lastmaintenancedate,
-                NextMaintenanceDate = m.Nextmaintenancedate,
-                ProductChangeoverTime = m.Productchangeovertime,
-                CostPerHour = m.Costperhour,
-                InstallationDate = m.Installationdate,
-                ModelNumber = m.Modelnumber
-            });
+            var response = _mapper.Map<IEnumerable<MachineResponseDTO>>(machines);
             return Ok(response);
 
 

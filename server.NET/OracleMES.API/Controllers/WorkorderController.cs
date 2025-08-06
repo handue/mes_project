@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using OracleMES.Core.DTOs;
 using OracleMES.Core.Services;
 using OracleMES.Core.Entities;
+using AutoMapper;
 
 namespace OracleMES.API.Controllers
 {
@@ -10,44 +11,20 @@ namespace OracleMES.API.Controllers
     public class WorkorderController : ControllerBase
     {
         private readonly WorkorderService _workorderService;
+        private readonly IMapper _mapper;
 
-        public WorkorderController(WorkorderService workorderService)
+        public WorkorderController(WorkorderService workorderService, IMapper mapper)
         {
             _workorderService = workorderService;
+            _mapper = mapper;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<WorkorderResponseDTO>>> GetAllWorkorders()
         {
-            try
-            {
-                var workorders = await _workorderService.GetActiveWorkordersAsync();
-                var response = workorders.Select(w => new WorkorderResponseDTO
-                {
-                    OrderId = w.Orderid.ToString(),
-                    ProductId = w.Productid.ToString(),
-                    WorkcenterId = w.Workcenterid.ToString(),
-                    MachineId = w.Machineid.ToString(),
-                    EmployeeId = w.Employeeid.ToString(),
-                    Quantity = (int)w.Quantity,
-                    PlannedStartTime = w.Plannedstarttime,
-                    PlannedEndTime = w.Plannedendtime,
-                    ActualStartTime = w.Actualstarttime,
-                    ActualEndTime = w.Actualendtime,
-                    Status = w.Status,
-                    Priority = (int)w.Priority,
-                    LeadTime = (int)w.Leadtime,
-                    LotNumber = w.Lotnumber,
-                    ActualProduction = w.Actualproduction,
-                    Scrap = w.Scrap,
-                    SetupTimeActual = w.Setuptimeactual
-                });
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "작업지시 목록을 가져오는 중 오류가 발생했습니다.", error = ex.Message });
-            }
+            var workorders = await _workorderService.GetActiveWorkordersAsync();
+            var response = _mapper.Map<IEnumerable<WorkorderResponseDTO>>(workorders);
+            return Ok(response);
         }
 
         [HttpGet("{id}")]

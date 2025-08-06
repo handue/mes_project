@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using OracleMES.Core.DTOs;
 using OracleMES.Core.Services;
 using OracleMES.Core.Entities;
+using AutoMapper;
 
 namespace OracleMES.API.Controllers
 {
@@ -10,38 +11,20 @@ namespace OracleMES.API.Controllers
     public class InventoryController : ControllerBase
     {
         private readonly InventoryService _inventoryService;
+        private readonly IMapper _mapper;
 
-        public InventoryController(InventoryService inventoryService)
+        public InventoryController(InventoryService inventoryService, IMapper mapper)
         {
             _inventoryService = inventoryService;
+            _mapper = mapper;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<InventoryResponseDTO>>> GetAllInventory()
         {
-            try
-            {
-                var inventory = await _inventoryService.GetAllInventoryAsync();
-                var response = inventory.Select(i => new InventoryResponseDTO
-                {
-                    ItemId = i.Itemid.ToString(),
-                    Name = i.Name,
-                    Category = i.Category,
-                    Quantity = i.Quantity,
-                    ReorderLevel = i.Reorderlevel,
-                    SupplierId = i.Supplierid?.ToString(),
-                    LeadTime = i.Leadtime,
-                    Cost = i.Cost,
-                    LotNumber = i.Lotnumber,
-                    Location = i.Location,
-                    LastReceivedDate = i.Lastreceiveddate
-                });
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "재고 목록을 가져오는 중 오류가 발생했습니다.", error = ex.Message });
-            }
+            var inventory = await _inventoryService.GetAllInventoryAsync();
+            var response = _mapper.Map<IEnumerable<InventoryResponseDTO>>(inventory);
+            return Ok(response);
         }
 
         [HttpGet("{id}")]
