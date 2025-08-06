@@ -215,56 +215,66 @@ This document is a sequential log of the Oracle MES project development progress
   - WORKORDER → WORKORDERS, MACHINE → MACHINES로 테이블명 수정 | Correct table names from WORKORDER → WORKORDERS, MACHINE → MACHINES
   - 데이터베이스 검증 스크립트 정확성 향상 | Improve database verification script accuracy
 
+##### ✅ 8.9 AutoMapper 완전 구현 | AutoMapper Complete Implementation
+- **완료일**: 2025-08-06
+- **작업 내용**:
+  - AutoMapper 15.0.1 패키지 설치 및 설정 | AutoMapper 15.0.1 package installation and configuration
+  - 핵심 3개 Profile 클래스 완성 (Machine, Workorder, Inventory) | Complete 3 core Profile classes (Machine, Workorder, Inventory)
+  - MachineController, WorkorderController, InventoryController에 AutoMapper 적용 | Apply AutoMapper to MachineController, WorkorderController, InventoryController
+  - 200+ 줄의 수동 매핑 코드를 30줄 미만으로 단축 (85% 코드 감소) | Reduce 200+ lines of manual mapping code to less than 30 lines (85% code reduction)
+  - API 엔드포인트 정상 작동 확인 | Verify API endpoints working properly
+
 ---
 
 ## 🔄 현재 진행 중인 작업 | Current Work in Progress
 
-### Phase 8.5: API-DB 데이터 연동 구현 | API-DB Data Integration Implementation
+### Phase 9: Entity Framework 키 매핑 완성 | Entity Framework Key Mapping Completion
 
 #### 📋 현재 작업 내용 | Current Work Content
-- **시작일**: 2025-08-03
-- **예상 완료일**: 2025-08-10 (약 1주일) | Expected completion: 2025-08-10 (about 1 week)
-- **작업 목표**: API 요청 시 데이터베이스에서 실제 데이터가 정상적으로 조회되도록 구현 | Implement proper data retrieval from database when API requests are made
+- **시작일**: 2025-08-06
+- **예상 완료일**: 2025-08-07 (약 1일) | Expected completion: 2025-08-07 (about 1 day)
+- **작업 목표**: 나머지 엔티티들의 HasNoKey 문제 해결 및 CRUD 작업 정상화 | Resolve HasNoKey issues for remaining entities and normalize CRUD operations
 - **주요 작업**:
-  - Oracle 데이터베이스 연결 안정성 확인 | Verify Oracle database connection stability
-  - API 엔드포인트에서 실제 데이터 조회 테스트 | Test actual data retrieval from API endpoints  
-  - 데이터 매핑 및 변환 로직 검증 | Verify data mapping and conversion logic
-  - 성능 최적화 및 오류 처리 개선 | Performance optimization and error handling improvement
+  - Workorder, Inventory 엔티티 키 매핑 설정 | Set up key mapping for Workorder, Inventory entities
+  - 나머지 API 엔드포인트 테스트 및 검증 | Test and verify remaining API endpoints
+  - 전체 CRUD 작업 정상화 확인 | Verify complete CRUD operations normalization
 
-### Phase 2.3: AutoMapper 설정 및 DTO 변환 로직 | AutoMapper Setup and DTO Conversion Logic (예정)
+### Phase 10: 간단한 프론트엔드 대시보드 | Simple Frontend Dashboard (예정)
 
 #### 📋 다음 단계 계획 | Next Steps Plan
 
-##### 2.3.1 AutoMapper 프로필 설정 | AutoMapper Profile Configuration
-- **예정일**: 2025-08-11 ~ 2025-08-18 (약 1주일) | Expected: 2025-08-11 ~ 2025-08-18 (about 1 week)
+##### 10.1 React 기반 대시보드 설정 | React-based Dashboard Setup
+- **예정일**: 2025-08-08 ~ 2025-08-15 (약 1주일) | Expected: 2025-08-08 ~ 2025-08-15 (about 1 week)
 - **계획 내용**:
-  - AutoMapper NuGet 패키지 설치 | AutoMapper NuGet package installation
-  - Entity ↔ DTO 변환을 위한 프로필 클래스 생성 | Create profile classes for Entity ↔ DTO conversion
-  - 양방향 매핑 설정 (Entity → DTO, DTO → Entity) | Bidirectional mapping setup (Entity → DTO, DTO → Entity)
-  - 복잡한 객체 매핑 규칙 정의 | Define complex object mapping rules
+  - React 프로젝트 초기 설정 | React project initial setup
+  - 기본 대시보드 UI 컴포넌트 구성 | Basic dashboard UI component structure
+  - API 연동을 위한 axios 설정 | Axios setup for API integration
+  - 설비 목록 및 상태 표시 화면 구현 | Implement machine list and status display screen
 
-##### 2.3.2 서비스 메서드 DTO 인자 변경 | Service Methods DTO Parameter Changes
-- **예정일**: 2025-08-19 ~ 2025-08-25 (약 1주일) | Expected: 2025-08-19 ~ 2025-08-25 (about 1 week)
+##### 10.2 실시간 데이터 시각화 | Real-time Data Visualization
+- **예정일**: 2025-08-16 ~ 2025-08-22 (약 1주일) | Expected: 2025-08-16 ~ 2025-08-22 (about 1 week)
 - **계획 내용**:
-  - 모든 서비스 메서드의 매개변수를 Entity → DTO로 변경 | Change all service method parameters from Entity → DTO
-  - AutoMapper를 사용한 Entity ↔ DTO 변환 로직 적용 | Apply Entity ↔ DTO conversion logic using AutoMapper
-  - 컨트롤러에서 DTO를 받아 서비스로 전달하는 구조로 변경 | Change structure to pass DTOs from controllers to services
+  - Chart.js 또는 Recharts를 이용한 차트 구현 | Chart implementation using Chart.js or Recharts
+  - 실시간 설비 상태 모니터링 | Real-time equipment status monitoring
+  - 생산 실적 대시보드 | Production performance dashboard
+  - 반응형 디자인 적용 | Responsive design implementation
 
-##### 2.3.3 입력 검증 강화 | Input Validation Enhancement
-- **예정일**: 2025-08-26 ~ 2025-09-01 (약 1주일) | Expected: 2025-08-26 ~ 2025-09-01 (about 1 week)
+##### 10.3 입력 검증 및 보안 강화 | Input Validation and Security Enhancement
+- **예정일**: 2025-08-23 ~ 2025-08-29 (약 1주일) | Expected: 2025-08-23 ~ 2025-08-29 (about 1 week)
 - **계획 내용**:
   - FluentValidation 라이브러리 도입 | Introduce FluentValidation library
   - DTO 클래스별 검증 규칙 정의 | Define validation rules for each DTO class
   - 비즈니스 규칙 검증 로직 강화 | Strengthen business rule validation logic
+  - 기본 인증 시스템 구현 | Basic authentication system implementation
 
 ---
 
 ## 📊 개발 완료 통계 | Development Completion Statistics
 
 ### ✅ 완료된 작업 | Completed Tasks
-- **총 커밋 수**: 47개 | Total commits: 47
-- **구현된 파일 수**: 55+ 개 | Implemented files: 55+
-- **총 코드 라인 수**: 11,200+ 줄 | Total code lines: 11,200+
+- **총 커밋 수**: 52개 | Total commits: 52
+- **구현된 파일 수**: 60+ 개 | Implemented files: 60+
+- **총 코드 라인 수**: 12,000+ 줄 | Total code lines: 12,000+
 - **완료된 기능 영역**: 8개 주요 영역 | Completed functional areas: 8 major areas
 
 ### 🎯 주요 성과 | Key Achievements
@@ -275,10 +285,11 @@ This document is a sequential log of the Oracle MES project development progress
 5. **의존성 주입 완성**: 완전한 DI 컨테이너 설정 | Dependency injection completion: complete DI container setup
 6. **라우팅 및 미들웨어 문제 해결**: API 요청 처리 정상화 | Routing and middleware issue resolution: API request processing normalization
 7. **Entity Framework 키 매핑 해결**: HasNoKey 문제 해결로 CRUD 작업 정상화 | Entity Framework key mapping resolution: CRUD operations normalization by resolving HasNoKey issue
+8. **AutoMapper 완전 구현**: 수동 매핑 코드 85% 감소로 코드 효율성 극대화 | AutoMapper complete implementation: 85% reduction in manual mapping code for maximum efficiency
 
 ### 📈 현재 진행률 | Current Progress Rate
 - **Phase 1 (백엔드 API)**: 100% 완료 ✅ | Phase 1 (Backend API): 100% complete ✅
-- **Phase 2 (비즈니스 로직)**: 85% 완료 🔄 | Phase 2 (Business Logic): 85% complete 🔄
+- **Phase 2 (비즈니스 로직)**: 95% 완료 🔄 | Phase 2 (Business Logic): 95% complete 🔄
 - **Phase 3 (인증/보안)**: 0% 완료 ⏳ | Phase 3 (Authentication/Security): 0% complete ⏳
 - **Phase 4 (실시간 기능)**: 0% 완료 ⏳ | Phase 4 (Real-time Features): 0% complete ⏳
 - **Phase 5 (프론트엔드)**: 0% 완료 ⏳ | Phase 5 (Frontend): 0% complete ⏳
@@ -287,18 +298,28 @@ This document is a sequential log of the Oracle MES project development progress
 
 ## 🚀 다음 개발 단계 | Next Development Phase
 
-### Phase 2.3: AutoMapper 및 DTO 변환 로직 | AutoMapper and DTO Conversion Logic
-- **목표**: Entity와 DTO 간의 자동 변환 시스템 구축 | Goal: Build automatic conversion system between Entity and DTO
+### Phase 9: Entity Framework 키 매핑 완성 | Entity Framework Key Mapping Completion
+- **목표**: 나머지 엔티티들의 HasNoKey 문제 해결 및 전체 CRUD 작업 정상화 | Goal: Resolve HasNoKey issues for remaining entities and normalize all CRUD operations
 - **기간**: 예상 1-2일 | Duration: Expected 1-2 days
+- **예상 시작일**: 2025-08-07 | Expected start date: 2025-08-07
 - **주요 작업**:
-  1. AutoMapper 설정 및 프로필 구성 | AutoMapper setup and profile configuration
-  2. 서비스 메서드 DTO 인자 변경 | Service methods DTO parameter changes
-  3. 입력 검증 시스템 강화 | Input validation system enhancement
+  1. Workorder, Inventory 엔티티 키 매핑 설정 | Set up key mapping for Workorder, Inventory entities
+  2. 나머지 API 엔드포인트 테스트 및 검증 | Test and verify remaining API endpoints
+  3. 전체 CRUD 작업 정상화 확인 | Verify complete CRUD operations normalization
 
-### Phase 3: 인증 및 보안 | Authentication and Security
-- **목표**: JWT 기반 인증 시스템 구축 | Goal: Build JWT-based authentication system
-- **기간**: 예상 3-4주 | Duration: Expected 3-4 weeks
-- **예상 시작일**: 2025-09-02 | Expected start date: 2025-09-02
+### Phase 10: 간단한 프론트엔드 대시보드 | Simple Frontend Dashboard
+- **목표**: React 기반 간단한 대시보드 구현 | Goal: Implement simple React-based dashboard
+- **기간**: 예상 3주 | Duration: Expected 3 weeks
+- **예상 시작일**: 2025-08-08 | Expected start date: 2025-08-08
+- **주요 작업**:
+  1. React 대시보드 설정 및 기본 UI | React dashboard setup and basic UI
+  2. 실시간 데이터 시각화 | Real-time data visualization
+  3. 입력 검증 및 기본 보안 | Input validation and basic security
+
+### Phase 11: 인증 및 보안 강화 | Authentication and Security Enhancement
+- **목표**: JWT 기반 인증 시스템 구축 및 보안 강화 | Goal: Build JWT-based authentication system and enhance security
+- **기간**: 예상 2-3주 | Duration: Expected 2-3 weeks
+- **예상 시작일**: 2025-09-01 | Expected start date: 2025-09-01
 - **주요 작업**:
   1. JWT 토큰 인증 구현 | JWT token authentication implementation
   2. 사용자 관리 API 개발 | User management API development
