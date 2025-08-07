@@ -180,9 +180,8 @@ public partial class MesDbContext : DbContext
 
         modelBuilder.Entity<Inventory>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("INVENTORY");
+            entity.HasKey(e => e.Itemid);
+            entity.ToTable("INVENTORY");
 
             entity.Property(e => e.Category)
                 .HasColumnType("CLOB")
@@ -496,9 +495,8 @@ public partial class MesDbContext : DbContext
 
         modelBuilder.Entity<Workorder>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("WORKORDERS");
+            entity.HasKey(e => e.Orderid);
+            entity.ToTable("WORKORDERS");
 
             entity.Property(e => e.Actualendtime)
                 .HasMaxLength(100)
