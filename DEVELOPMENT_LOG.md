@@ -224,22 +224,33 @@ This document is a sequential log of the Oracle MES project development progress
   - 200+ 줄의 수동 매핑 코드를 30줄 미만으로 단축 (85% 코드 감소) | Reduce 200+ lines of manual mapping code to less than 30 lines (85% code reduction)
   - API 엔드포인트 정상 작동 확인 | Verify API endpoints working properly
 
+#### 9단계: Entity Framework 키 매핑 완성 | Phase 9: Entity Framework Key Mapping Completion
+
+##### ✅ 9.1 핵심 엔티티 키 매핑 완성 | Core Entity Key Mapping Completion
+- **완료일**: 2025-08-06
+- **작업 내용**:
+  - Workorder 엔티티 HasKey(e => e.Orderid) 설정 | Set HasKey(e => e.Orderid) for Workorder entity
+  - Inventory 엔티티 HasKey(e => e.Itemid) 설정 | Set HasKey(e => e.Itemid) for Inventory entity
+  - 핵심 3개 API 엔드포인트 정상 작동 확인 | Verify core 3 API endpoints working properly
+  - 전체 CRUD 작업 정상화 완료 | Complete normalization of all CRUD operations
+
 ---
 
 ## 🔄 현재 진행 중인 작업 | Current Work in Progress
 
-### Phase 9: Entity Framework 키 매핑 완성 | Entity Framework Key Mapping Completion
+### Phase 10: 간단한 프론트엔드 대시보드 | Simple Frontend Dashboard
 
 #### 📋 현재 작업 내용 | Current Work Content
-- **시작일**: 2025-08-06
-- **예상 완료일**: 2025-08-07 (약 1일) | Expected completion: 2025-08-07 (about 1 day)
-- **작업 목표**: 나머지 엔티티들의 HasNoKey 문제 해결 및 CRUD 작업 정상화 | Resolve HasNoKey issues for remaining entities and normalize CRUD operations
+- **시작일**: 2025-08-07
+- **예상 완료일**: 2025-08-29 (약 3주) | Expected completion: 2025-08-29 (about 3 weeks)
+- **작업 목표**: React 기반 간단한 MES 대시보드 구현 | Implement simple React-based MES dashboard
 - **주요 작업**:
-  - Workorder, Inventory 엔티티 키 매핑 설정 | Set up key mapping for Workorder, Inventory entities
-  - 나머지 API 엔드포인트 테스트 및 검증 | Test and verify remaining API endpoints
-  - 전체 CRUD 작업 정상화 확인 | Verify complete CRUD operations normalization
+  - React 프로젝트 초기 설정 및 기본 UI 구성 | React project setup and basic UI structure
+  - API 연동을 위한 axios 설정 | Axios setup for API integration
+  - 실시간 설비 상태 모니터링 화면 | Real-time equipment status monitoring screen
+  - 생산 실적 및 데이터 시각화 | Production performance and data visualization
 
-### Phase 10: 간단한 프론트엔드 대시보드 | Simple Frontend Dashboard (예정)
+### Phase 11: 최종 정리 및 배포 준비 | Final Cleanup and Deployment Preparation (예정)
 
 #### 📋 다음 단계 계획 | Next Steps Plan
 
@@ -272,10 +283,10 @@ This document is a sequential log of the Oracle MES project development progress
 ## 📊 개발 완료 통계 | Development Completion Statistics
 
 ### ✅ 완료된 작업 | Completed Tasks
-- **총 커밋 수**: 52개 | Total commits: 52
+- **총 커밋 수**: 54개 | Total commits: 54
 - **구현된 파일 수**: 60+ 개 | Implemented files: 60+
-- **총 코드 라인 수**: 12,000+ 줄 | Total code lines: 12,000+
-- **완료된 기능 영역**: 8개 주요 영역 | Completed functional areas: 8 major areas
+- **총 코드 라인 수**: 12,100+ 줄 | Total code lines: 12,100+
+- **완료된 기능 영역**: 9개 주요 영역 | Completed functional areas: 9 major areas
 
 ### 🎯 주요 성과 | Key Achievements
 1. **완전한 백엔드 API 구현**: 7개 컨트롤러, 10개 서비스 | Complete backend API implementation: 7 controllers, 10 services
@@ -286,10 +297,11 @@ This document is a sequential log of the Oracle MES project development progress
 6. **라우팅 및 미들웨어 문제 해결**: API 요청 처리 정상화 | Routing and middleware issue resolution: API request processing normalization
 7. **Entity Framework 키 매핑 해결**: HasNoKey 문제 해결로 CRUD 작업 정상화 | Entity Framework key mapping resolution: CRUD operations normalization by resolving HasNoKey issue
 8. **AutoMapper 완전 구현**: 수동 매핑 코드 85% 감소로 코드 효율성 극대화 | AutoMapper complete implementation: 85% reduction in manual mapping code for maximum efficiency
+9. **핵심 엔티티 완전 정상화**: Machine, Workorder, Inventory 3개 API 완벽 작동 | Core entity complete normalization: Perfect operation of Machine, Workorder, Inventory 3 APIs
 
 ### 📈 현재 진행률 | Current Progress Rate
 - **Phase 1 (백엔드 API)**: 100% 완료 ✅ | Phase 1 (Backend API): 100% complete ✅
-- **Phase 2 (비즈니스 로직)**: 95% 완료 🔄 | Phase 2 (Business Logic): 95% complete 🔄
+- **Phase 2 (비즈니스 로직)**: 100% 완료 ✅ | Phase 2 (Business Logic): 100% complete ✅
 - **Phase 3 (인증/보안)**: 0% 완료 ⏳ | Phase 3 (Authentication/Security): 0% complete ⏳
 - **Phase 4 (실시간 기능)**: 0% 완료 ⏳ | Phase 4 (Real-time Features): 0% complete ⏳
 - **Phase 5 (프론트엔드)**: 0% 완료 ⏳ | Phase 5 (Frontend): 0% complete ⏳
@@ -297,15 +309,6 @@ This document is a sequential log of the Oracle MES project development progress
 ---
 
 ## 🚀 다음 개발 단계 | Next Development Phase
-
-### Phase 9: Entity Framework 키 매핑 완성 | Entity Framework Key Mapping Completion
-- **목표**: 나머지 엔티티들의 HasNoKey 문제 해결 및 전체 CRUD 작업 정상화 | Goal: Resolve HasNoKey issues for remaining entities and normalize all CRUD operations
-- **기간**: 예상 1-2일 | Duration: Expected 1-2 days
-- **예상 시작일**: 2025-08-07 | Expected start date: 2025-08-07
-- **주요 작업**:
-  1. Workorder, Inventory 엔티티 키 매핑 설정 | Set up key mapping for Workorder, Inventory entities
-  2. 나머지 API 엔드포인트 테스트 및 검증 | Test and verify remaining API endpoints
-  3. 전체 CRUD 작업 정상화 확인 | Verify complete CRUD operations normalization
 
 ### Phase 10: 간단한 프론트엔드 대시보드 | Simple Frontend Dashboard
 - **목표**: React 기반 간단한 대시보드 구현 | Goal: Implement simple React-based dashboard
