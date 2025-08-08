@@ -1,0 +1,161 @@
+import axios from "axios";
+import type { AxiosInstance, AxiosResponse } from "axios";
+
+import type {
+  ApiResponse,
+  MachineResponse,
+  WorkorderResponse,
+  InventoryResponse,
+  DashboardStats,
+} from "../types/api";
+
+class ApiService {
+  private api: AxiosInstance;
+
+  constructor() {
+    this.api = axios.create({
+      baseURL: "http://localhost:5087/api",
+      timeout: 10000,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    // Request interceptor
+    this.api.interceptors.request.use(
+      (config: any) => {
+        console.log(
+          "🚀 API Request:",
+          config.method?.toUpperCase(),
+          config.url
+        );
+        return config;
+      },
+      (error: any) => {
+        console.error("❌ Request Error:", error);
+        return Promise.reject(error);
+      }
+    );
+
+    // Response interceptor
+    this.api.interceptors.response.use(
+      (response: any) => {
+        console.log("✅ API Response:", response.status, response.config.url);
+        return response;
+      },
+      (error: any) => {
+        console.error(
+          "❌ Response Error:",
+          error.response?.status,
+          error.response?.data
+        );
+        return Promise.reject(error);
+      }
+    );
+  }
+
+  // Machine API methods
+  async getMachines(): Promise<MachineResponse[]> {
+    try {
+      const response: AxiosResponse<ApiResponse<MachineResponse[]>> =
+        await this.api.get("/machine");
+      return response.data.data;
+    } catch (error) {
+      console.error("Error fetching machines:", error);
+      throw error;
+    }
+  }
+
+  async getMachine(id: string): Promise<MachineResponse> {
+    try {
+      const response: AxiosResponse<ApiResponse<MachineResponse>> =
+        await this.api.get(`/machine/${id}`);
+      return response.data.data;
+    } catch (error) {
+      console.error("Error fetching machine:", error);
+      throw error;
+    }
+  }
+
+  // Workorder API methods
+  async getWorkorders(): Promise<WorkorderResponse[]> {
+    try {
+      const response: AxiosResponse<ApiResponse<WorkorderResponse[]>> =
+        await this.api.get("/workorder");
+      return response.data.data;
+    } catch (error) {
+      console.error("Error fetching workorders:", error);
+      throw error;
+    }
+  }
+
+  async getWorkorder(id: string): Promise<WorkorderResponse> {
+    try {
+      const response: AxiosResponse<ApiResponse<WorkorderResponse>> =
+        await this.api.get(`/workorder/${id}`);
+      return response.data.data;
+    } catch (error) {
+      console.error("Error fetching workorder:", error);
+      throw error;
+    }
+  }
+
+  // Inventory API methods
+  async getInventory(): Promise<InventoryResponse[]> {
+    try {
+      const response: AxiosResponse<ApiResponse<InventoryResponse[]>> =
+        await this.api.get("/inventory");
+      return response.data.data;
+    } catch (error) {
+      console.error("Error fetching inventory:", error);
+      throw error;
+    }
+  }
+
+  async getInventoryItem(id: string): Promise<InventoryResponse> {
+    try {
+      const response: AxiosResponse<ApiResponse<InventoryResponse>> =
+        await this.api.get(`/inventory/${id}`);
+      return response.data.data;
+    } catch (error) {
+      console.error("Error fetching inventory item:", error);
+      throw error;
+    }
+  }
+
+  // Dashboard Stats (computed from other APIs)
+  async getDashboardStats(): Promise<DashboardStats> {
+    try {
+      const [machines, workorders, inventory] = await Promise.all([
+        this.getMachines(),
+        this.getWorkorders(),
+        this.getInventory(),
+      ]);
+
+      const stats: DashboardStats = {
+        totalMachines: machines.length,
+        activeMachines: machines.filter(
+          (m) => m.status === "running" || m.status === "idle"
+        ).length,
+        totalWorkorders: workorders.length,
+        completedWorkorders: workorders.filter((w) => w.status === "Completed")
+          .length,
+        lowStockItems: inventory.filter((i) => i.quantity <= i.reorderLevel)
+          .length,
+        totalInventoryValue: inventory.reduce(
+          (sum, item) => sum + (item.cost || 0) * item.quantity,
+          0
+        ),
+      };
+
+      return stats;
+    } catch (error) {
+      console.error("Error calculating dashboard stats:", error);
+      throw error;
+    }
+  }
+}
+
+// Export singleton instance
+export const apiService = new ApiService();
+export default apiService;
