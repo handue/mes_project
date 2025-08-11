@@ -75,4 +75,4 @@ const MachineStatus: React.FC<MachineStatusProps> = ({ machines }) => {
   );
 };
 
-export default MachineStatus;
+export default React.memo(MachineStatus);

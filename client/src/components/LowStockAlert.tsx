@@ -78,4 +78,4 @@ const LowStockAlert: React.FC<LowStockAlertProps> = ({ inventory }) => {
   );
 };
 
-export default LowStockAlert;
+export default React.memo(LowStockAlert);

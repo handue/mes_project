@@ -108,4 +108,4 @@ const RecentWorkorders: React.FC<RecentWorkordersProps> = ({ workorders }) => {
   );
 };
 
-export default RecentWorkorders;
+export default React.memo(RecentWorkorders);
