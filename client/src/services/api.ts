@@ -49,7 +49,38 @@ class ApiService {
           error.response?.status,
           error.response?.data
         );
-        return Promise.reject(error);
+        
+        // Handle different error types
+        let errorMessage = 'An unexpected error occurred';
+        
+        if (error.code === 'ECONNABORTED' || error.code === 'ERR_NETWORK') {
+          errorMessage = 'Network connection failed. Please check if the API server is running on http://localhost:5087';
+        } else if (error.response) {
+          // Server responded with error status
+          const status = error.response.status;
+          switch (status) {
+            case 404:
+              errorMessage = 'API endpoint not found';
+              break;
+            case 500:
+              errorMessage = 'Internal server error';
+              break;
+            case 503:
+              errorMessage = 'Service unavailable';
+              break;
+            default:
+              errorMessage = `Server error: ${status}`;
+          }
+        } else if (error.request) {
+          errorMessage = 'No response from server. Please check if the API server is running.';
+        }
+        
+        // Create enhanced error object
+        const enhancedError = new Error(errorMessage);
+        (enhancedError as any).originalError = error;
+        (enhancedError as any).status = error.response?.status;
+        
+        return Promise.reject(enhancedError);
       }
     );
   }
