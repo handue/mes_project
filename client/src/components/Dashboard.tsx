@@ -44,7 +44,7 @@ const Dashboard: React.FC = () => {
     dispatch(fetchDashboardStats());
   };
 
-  if (loading && !stats && machines.length === 0) {
+  if (loading && !stats && (!machines || machines.length === 0)) {
     return (
       <div className="min-h-screen bg-gray-50">
         {/* Header Skeleton */}
@@ -172,13 +172,13 @@ const Dashboard: React.FC = () => {
           <MachineStatus machines={machines} />
 
           {/* Recent Work Orders */}
-          <RecentWorkorders workorders={workorders.slice(0, 5)} />
+          <RecentWorkorders workorders={(workorders || []).slice(0, 5)} />
         </div>
 
         {/* Low Stock Alert */}
         {stats && stats.lowStockItems > 0 && (
           <div className="mt-8">
-            <LowStockAlert inventory={inventory.filter(item => item.quantity <= item.reorderLevel)} />
+            <LowStockAlert inventory={(inventory || []).filter(item => item.quantity <= item.reorderLevel)} />
           </div>
         )}
       </div>
