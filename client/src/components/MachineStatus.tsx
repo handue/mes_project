@@ -44,14 +44,14 @@ const MachineStatus: React.FC<MachineStatusProps> = ({ machines }) => {
       </div>
       
       <div className="p-6">
-        {machines.length === 0 ? (
+        {!machines || machines.length === 0 ? (
           <div className="text-center py-8">
             <Settings className="h-12 w-12 text-gray-300 mx-auto mb-4" />
             <p className="text-gray-500">No machines found</p>
           </div>
         ) : (
           <div className="space-y-4">
-            {machines.map((machine) => (
+            {(machines || []).map((machine) => (
               <div key={machine.machineId} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors">
                 <div className="flex items-center space-x-3">
                   {getStatusIcon(machine.status)}

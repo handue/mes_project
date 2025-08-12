@@ -42,14 +42,14 @@ const RecentWorkorders: React.FC<RecentWorkordersProps> = ({ workorders }) => {
       </div>
       
       <div className="p-6">
-        {workorders.length === 0 ? (
+        {!workorders || workorders.length === 0 ? (
           <div className="text-center py-8">
             <ClipboardList className="h-12 w-12 text-gray-300 mx-auto mb-4" />
             <p className="text-gray-500">No work orders found</p>
           </div>
         ) : (
           <div className="space-y-4">
-            {workorders.map((workorder) => (
+            {(workorders || []).map((workorder) => (
               <div key={workorder.orderId} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center space-x-2">

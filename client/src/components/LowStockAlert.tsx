@@ -7,7 +7,7 @@ interface LowStockAlertProps {
 }
 
 const LowStockAlert: React.FC<LowStockAlertProps> = ({ inventory }) => {
-  if (inventory.length === 0) {
+  if (!inventory || inventory.length === 0) {
     return null;
   }
 
@@ -23,7 +23,7 @@ const LowStockAlert: React.FC<LowStockAlertProps> = ({ inventory }) => {
       
       <div className="p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {inventory.map((item) => (
+          {(inventory || []).map((item) => (
             <div key={item.itemId} className="border border-yellow-200 rounded-lg p-4 bg-yellow-50">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center space-x-2">
