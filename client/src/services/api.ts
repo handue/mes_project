@@ -90,7 +90,7 @@ class ApiService {
     try {
       const response: AxiosResponse<ApiResponse<MachineResponse[]>> =
         await this.api.get("/machine");
-      return response.data.data;
+      return response.data.data || [];
     } catch (error) {
       console.error("Error fetching machines:", error);
       throw error;
@@ -113,7 +113,7 @@ class ApiService {
     try {
       const response: AxiosResponse<ApiResponse<WorkorderResponse[]>> =
         await this.api.get("/workorder");
-      return response.data.data;
+      return response.data.data || [];
     } catch (error) {
       console.error("Error fetching workorders:", error);
       throw error;
@@ -136,7 +136,7 @@ class ApiService {
     try {
       const response: AxiosResponse<ApiResponse<InventoryResponse[]>> =
         await this.api.get("/inventory");
-      return response.data.data;
+      return response.data.data || [];
     } catch (error) {
       console.error("Error fetching inventory:", error);
       throw error;
@@ -158,22 +158,27 @@ class ApiService {
   async getDashboardStats(): Promise<DashboardStats> {
     try {
       const [machines, workorders, inventory] = await Promise.all([
-        this.getMachines(),
-        this.getWorkorders(),
-        this.getInventory(),
+        this.getMachines().catch(() => []),
+        this.getWorkorders().catch(() => []),
+        this.getInventory().catch(() => []),
       ]);
 
+      // Ensure arrays are valid
+      const safeMachines = machines || [];
+      const safeWorkorders = workorders || [];
+      const safeInventory = inventory || [];
+
       const stats: DashboardStats = {
-        totalMachines: machines.length,
-        activeMachines: machines.filter(
+        totalMachines: safeMachines.length,
+        activeMachines: safeMachines.filter(
           (m) => m.status === "running" || m.status === "idle"
         ).length,
-        totalWorkorders: workorders.length,
-        completedWorkorders: workorders.filter((w) => w.status === "Completed")
+        totalWorkorders: safeWorkorders.length,
+        completedWorkorders: safeWorkorders.filter((w) => w.status === "Completed")
           .length,
-        lowStockItems: inventory.filter((i) => i.quantity <= i.reorderLevel)
+        lowStockItems: safeInventory.filter((i) => i.quantity <= i.reorderLevel)
           .length,
-        totalInventoryValue: inventory.reduce(
+        totalInventoryValue: safeInventory.reduce(
           (sum, item) => sum + (item.cost || 0) * item.quantity,
           0
         ),
@@ -182,7 +187,15 @@ class ApiService {
       return stats;
     } catch (error) {
       console.error("Error calculating dashboard stats:", error);
-      throw error;
+      // Return default stats instead of throwing
+      return {
+        totalMachines: 0,
+        activeMachines: 0,
+        totalWorkorders: 0,
+        completedWorkorders: 0,
+        lowStockItems: 0,
+        totalInventoryValue: 0,
+      };
     }
   }
 }
