@@ -472,12 +472,7 @@ chore: 빌드 프로세스 수정 | Update build process
 - [ ] 모바일 앱 개발 | Mobile app development
 - [ ] 외부 시스템 연동 | External system integration
 
-## 📄 라이센스 | License
 
-This project is licensed under the MIT License.
-## 📞 연락처 | Contact
-
-Email: uznah.j08@gmail.com
 
 ---
 
